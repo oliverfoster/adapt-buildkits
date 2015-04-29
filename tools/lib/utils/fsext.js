@@ -78,9 +78,9 @@ var pub = {
 
 	},
 	relative: function(atPath) {
-		if (atPath.substr(0,1) == "/") return atPath;
+		if (atPath.substr(0,1) == "/" || atPath.substr(1,1) == ":") return atPath;
 		if (atPath == "" || atPath === undefined) return process.cwd();
-		return path.join(process.cwd(), atPath);
+		return path.join(process.cwd(), atPath+"");
 	},
 	reset: function() {
 		listCache = {};
@@ -134,9 +134,11 @@ var pub = {
 		if (fs.existsSync(options.dest)) return true;
 		if (options.root === undefined) options.root = process.cwd();
 		options.root = pub.relative(options.root);
-
 		options.dest = options.dest+"";
+
 		var shortenedPath = (options.dest).substr(options.root.length);
+
+		console.log(shortenedPath);
 
 		var parts = shortenedPath.match(pathSplit);
 		var created = "";

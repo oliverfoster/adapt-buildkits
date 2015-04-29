@@ -59,6 +59,7 @@ module.exports = function(options) {
 
 					var pluginMainPath = path.join(pluginDir.path, bowerJSON.main);
 					var req = pluginMainPath.substr(base.length);
+					req = req.replace(/\\/g, "/");
 					if (req.substr(0,1) == "/") req = req.substr(1);
 
 					req = req.slice(0, -path.extname(req).length);

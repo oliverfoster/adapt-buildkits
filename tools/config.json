@@ -37,8 +37,7 @@
 			},
 			"shim": {
 				"backbone": [
-					"underscore",
-					"backbone-lib"
+					"underscore"
 				],
 				"libraries/libraries": [
 					"handlebars",
@@ -46,7 +45,6 @@
 					"imageReady",
 					"inview",
 					"velocity",
-					"backbone-lib",
 					"backbone",
 					"bowser",
 					"scrollTo",

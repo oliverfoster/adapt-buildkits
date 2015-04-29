@@ -94,7 +94,7 @@ module.exports = {
 					if (outputStat.mtime >= item.mtime) continue;
 				} 
 				if (!ifExists) {
-					console.log(chalk.yellow("Adding:", outputPath.path.substr(process.cwd().length)));
+					console.log(chalk.yellow("Adding:", outputPath.substr(process.cwd().length)));
 				}
 
 				fs.createReadStream(item.path).pipe(fs.createWriteStream(outputPath));
