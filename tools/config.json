@@ -1,0 +1,346 @@
+{
+	"actions": [
+		{
+			"@name": "libraries-bundler",
+			"@displayName": "Compiling Adapt foundation libraries...",
+			"@action": "bundler",
+			"baseUrl": "src",
+			"globs": [
+				"**/src/libraries/**"
+			],
+			"dest": "src/core/js/libraries/libraries.js"
+		},
+		{
+			"@name": "libraries-javascript",
+			"@displayName": "Building Adapt foundation libraries...",
+			"@action": "javascript",
+			"dynamic": false,
+			"baseUrl": "src/core/js",
+			"name": "libraries/libraries",
+			"globs": [ "**/core/js/libraries/*.js" ],
+			"optimize": "uglify2",
+    		"generateSourceMaps": true,
+			"sourceMapRelocate": "../../../src/core",
+			"paths": {
+				"jquery": "empty:",
+				"handlebars": "libraries/handlebars",
+				"underscore": "libraries/underscore",
+				"imageReady": "libraries/imageReady",
+				"inview": "libraries/inview",
+				"velocity": "libraries/velocity",
+				"backbone-lib": "libraries/backbone-lib",
+				"backbone": "libraries/backbone",
+				"bowser": "libraries/bowser",
+				"scrollTo": "libraries/scrollTo",
+				"a11y": "libraries/jquery.a11y",
+				"modernizr": "libraries/modernizr"
+			},
+			"shim": {
+				"backbone": [
+					"underscore",
+					"backbone-lib"
+				],
+				"libraries/libraries": [
+					"handlebars",
+					"underscore",
+					"imageReady",
+					"inview",
+					"velocity",
+					"backbone-lib",
+					"backbone",
+					"bowser",
+					"scrollTo",
+					"a11y",
+					"modernizr"
+				]
+			},
+			"dest": "{{dest}}/adapt/js/libraries.js"
+		},
+		{
+			"@name": "core-javascript",
+			"@displayName": "Building Adapt framework libraries...",
+			"@action": "javascript",
+			"dynamic": false,
+			"baseUrl": "src/core/js",
+			"globs": [ "*.js" ],
+			"name": "app",
+			"optimize": "uglify2",
+    		"generateSourceMaps": true,
+			"sourceMapRelocate": "../../../src/core/",
+			"includes": {
+				"coreJS" : {
+					"src/core/js/": [
+						"**/src/core/js/*.js",
+						"!app.js",
+						"!helpers.js",
+						"!libraries/",
+						"!scriptLoader.js"
+					]
+				},
+				"coreModels": {
+					"src/core/js/models/": "**/src/core/js/models/*.js"
+				},
+				"coreViews": {
+					"src/core/js/views/": "**/src/core/js/views/*.js"
+				}
+			},
+			"paths": {
+				"coreHelpers": "helpers",
+				"coreJS/libraries/bowser": "empty:",
+				"underscore": "empty:",
+				"handlebars": "empty:",
+				"backbone": "empty:",
+				"a11y": "empty:",
+				"velocity": "empty:",
+				"imageReady": "empty:",
+				"inview": "empty:",
+				"templates": "empty:",
+				"jquery": "empty:",
+				"scrollTo": "empty:",
+				"components": "empty:",
+				"extensions": "empty:",
+				"menu": "empty:",
+				"theme": "empty:"
+			},
+			"dest": "{{dest}}/adapt/js/core.js"
+		},
+		{
+			"@name": "bundles-handlebars",
+			"@displayName": "Building Adapt templates...",
+			"@action": "handlebars",
+			"src": [ 
+				"src/components",
+				"src/extensions",
+				"src/menu",
+				"src/theme"
+			],
+			"dest": "{{dest}}/adapt/js/templates.js",
+			"paritalGlobs": [ "**/partials/**" ],
+			"globs":  [ 
+				"**/templates/**/*.hbs", 
+				"**/templates/**/*.html", 
+				"**/templates/**/*.handlebars", 
+				"**/templates/**/*.htm" 
+			],
+			"requires": {
+				"Handlebars": "handlebars"
+			},
+			"context": "Handlebars.templates"
+		},
+		{
+			"@name": "bundles-less",
+			"@displayName": "Building Adapt styling...",
+			"@action": "less",
+			"baseUrl": "src",
+			"sourceMapFileInline": false,
+			"outputSourceFiles": true,
+			"sourceMapBasepath": "src",
+			"sourceMapURL": "adapt.css.map",
+			"sourceMapRelocate": "../../../src/",
+			"compress": true,
+			"src": [ 
+				"src/core",
+				"src/components",
+				"src/extensions",
+				"src/menu",
+				"src/theme"
+				
+			],
+			"dest": "{{dest}}/adapt/css/adapt.css",
+			"globs":  [ "**/less/**/*.less" ]
+		},
+		
+		{
+			"@name": "bundles-bundler",
+			"@displayName": "Compiling Adapt plugin libraries",
+			"@action": "bundler",
+			"baseUrl": "src",
+			"globs": [
+				"**/src/extensions",
+				"**/src/components",
+				"**/src/menu",
+				"**/src/theme",
+				"**/src/extensions/**",
+				"**/src/components/**",
+				"**/src/menu/**",
+				"**/src/theme/**"
+			],
+			"dest": "src/bundles.js"
+		},
+		{
+			"@name": "bundles-javascript",
+			"@displayName": "Building Adapt plugin libraries",
+			"@action": "javascript",
+			"baseUrl": "src",
+			"name": "bundles",
+			"globs": [ 
+				"**/src/extensions/**/*.js",
+				"**/src/components/**/*.js",
+				"**/src/menu/**/*.js",
+				"**/src/theme/**/*.js"
+			],
+			"optimize": "uglify2",
+    		"generateSourceMaps": true,
+			"sourceMapRelocate": "../../../src/",
+			"empties": {
+				"coreJS" : {
+					"src/core/js/": "*.js"
+				},
+				"coreModels": {
+					"src/core/js/models/": "*.js"
+				},
+				"coreViews": {
+					"src/core/js/views/": "*.js"
+				}
+			},
+			"paths": {
+				"coreHelpers": "empty:",
+				"coreJS/libraries/bowser": "empty:",
+				"underscore": "empty:",
+				"handlebars": "empty:",
+				"backbone": "empty:",
+				"a11y": "empty:",
+				"velocity": "empty:",
+				"imageReady": "empty:",
+				"inview": "empty:",
+				"templates": "empty:",
+				"jquery": "empty:",
+				"scrollTo": "empty:",
+				"bundles": "bundles"
+			},
+			"dest": "{{dest}}/adapt/js/bundles.js"
+		},
+		{
+			"@name": "foundation",
+			"@displayName": "Synching external libraries...",
+			"@action": "copy",
+			"root": "src/core/js/",
+			"src": "libraries",
+			"globs": [
+				"jquery.v2.js",
+				"jquery.js",
+				"require.js",
+				"modernizr.js",
+				"consoles.js",
+				"json2.js"
+			],
+			"dest": "{{dest}}"
+		},
+		{
+			"@name": "foundation",
+			"@displayName": "Synching script loader...",
+			"@action": "copy",
+			"root": "src/core/js/",
+			"src": "",
+			"globs": [
+				"scriptLoader.js"
+			],
+			"dest": "{{dest}}/adapt/js"
+		},
+		{
+			"@name": "loader",
+			"@displayName": "Synching tool resources...",
+			"@action": "copy",
+			"root": "tools/res/",
+			"src": "",
+			"globs": [
+				"**/**"
+			],
+			"dest": "{{dest}}"
+		},
+		{
+			"@name": "index.html",
+			"@displayName": "Synching index.html",
+			"@action": "copy",
+			"root": "src",
+			"src": "",
+			"globs": [
+				"!**/tools/**",
+				"!**/core/**",
+				"!**/extensions/**",
+				"!**/components/**",
+				"!**/theme/**",
+				"!**/menu/**",
+				"index.html"				
+			],
+			"dest": "{{dest}}"
+		},
+		{
+			"@name": "bundles-required-folder",
+			"@displayName": "Synching plugin required folders...",
+			"@action": "collate",
+			"on": "required",
+			"root": "src",
+			"src": "",
+			"globs": [
+				"**/extensions/**/required/**",
+				"**/components/**/required/**",
+				"**/theme/**/required/**",
+				"**/menu/**/required/**"		
+			],
+			"diffGlobs": [
+				"!**/adapt/**",
+				"!**/adapt",
+				"!**/assets/**",
+				"!**/assets",
+				"!**/course/**",
+				"!**/course",
+				"!**/libraries/**",
+				"!**/libraries",
+				"!index.html",
+				"**"
+			],
+			"dest": "{{dest}}"
+		},
+		{
+			"@name": "bundles-assets-folder",
+			"@displayName": "Synching plugin asset folders...",
+			"@action": "collate",
+			"on": "assets",
+			"root": "src",
+			"src": "",
+			"globs": [
+				"**/extensions/**/assets/**",
+				"**/components/**/assets/**",
+				"**/menu/**/assets/**"		
+			],
+			"diffGlobs": [
+				"**"
+			],
+			"dest": "{{dest}}/assets"
+		},
+		{
+			"@name": "bundles-fonts-folder",
+			"@displayName": "Synching font folders...",
+			"@action": "collate",
+			"on": "fonts",
+			"root": "src",
+			"src": "",
+			"globs": [
+				"**/extensions/**/fonts/**",
+				"**/components/**/fonts/**",
+				"**/menu/**/fonts/**",
+				"**/theme/**/fonts/**"			
+			],
+			"diffGlobs": [
+				"**"
+			],
+			"dest": "{{dest}}/adapt/css/fonts"
+		},
+		{
+			"@name": "theme-assets-folder",
+			"@displayName": "Synching theme asset folders...",
+			"@action": "collate",
+			"on": "assets",
+			"root": "src",
+			"src": "",
+			"globs": [
+				"**/theme/**/assets/**"	
+			],
+			"diffGlobs": [
+				"**"
+			],
+			"dest": "{{dest}}/adapt/css/assets"
+		}
+	]
+}

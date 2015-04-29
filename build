@@ -1,0 +1,2 @@
+#!/usr/bin/env node
+var index = require("./tools/build.js");
