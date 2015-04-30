@@ -154,6 +154,7 @@
 				"trackingdelete",
 				"trackingreset"
 			],
+			"reloadType": "css",
 			"baseUrl": "src",
 			"sourceMapFileInline": false,
 			"outputSourceFiles": true,

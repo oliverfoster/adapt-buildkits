@@ -6,7 +6,6 @@
   "author": "AdaptLearning",
   "license": "GPL v3",
   "devDependencies": {
-    "browser-sync": "^2.6.9",
     "chalk": "^1.0.0",
     "commander": "^2.8.1",
     "handlebars": "2.0.0",

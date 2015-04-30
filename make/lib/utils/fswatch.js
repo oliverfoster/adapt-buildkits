@@ -7,7 +7,7 @@ var paused = false;
 
 function watchStart() {
 	if (watchingInterval !== null) return;
-	watchingInterval = setInterval(watchLoop, 500);
+	watchingInterval = setInterval(watchLoop, 250);
 }
 
 function watchLoop() {

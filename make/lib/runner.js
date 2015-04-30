@@ -8,16 +8,17 @@ var hbs = require("handlebars");
 var taskqueue = require("./utils/taskqueue.js");
 var logger = require("./utils/logger.js");
 var _ = require("underscore");
+var server = require("./utils/server.js");
 
 
 var defaults;
 var toolsConfig = {};
 var indexActions;
 var actions;
-var reloadClient, reloadFiles;
 
 function loadConfigs(options) {
-	var configs = fsext.glob(path.dirname(__dirname), "*.json");
+	var configsPath = path.join(path.dirname(__dirname), "/conf/");
+	var configs = fsext.glob(configsPath, "*.json");
 	for (var i = 0, l = configs.length; i < l; i++) {
 		 toolsConfig = _.extend(toolsConfig, JSON.parse(fs.readFileSync(configs[i].path)));
 	}
@@ -83,12 +84,12 @@ function entryPoint(options) {
 	options = _.extend({}, defaults, options);
 
 	if (options.switches['force']) options.force = true;
-	if (options.switches['server']) server();
+	if (options.switches['server']) server.start(options);
 
-	logger.log("Mode: "+options.mode,0);
-	logger.log("Structure:"+options.type,0);
-	logger.log("Forced: "+(options.force || false),0);
-	logger.log("Courses: "+(options.items.join(",")||"All"),0);
+	logger.log("Building Mode: "+options.mode,0);
+	logger.log("Structure Type: "+options.type,0);
+	logger.log("Forced Build: "+(options.force || false),0);
+	logger.log("Output Courses: "+(options.items.join(",")||"All"),0);
 
 	switch(options.type) {
 	case "builds/courses/course":
@@ -147,31 +148,6 @@ function srcsFolder(options) {
 	build(opts);
 }
 
-function server() {
-	var browserSync = require('browser-sync'),
-        serveIndex = require('serve-index');
-
-    reloadClient = browserSync.reload;
-
-    var index = serveIndex( defaults.dest, {'icons': true})
-    var srv = browserSync({
-        server: {
-        	index: "not_something_that_should_be_found.html",
-            baseDir: defaults.dest,
-            middleware: function (req, res, next) {
-                if (req.url.substr(-1) == "/") index(req, res, next);
-                else next();
-            }
-        },
-        notify: true,
-        ghostMode: {
-            clicks: true,
-            location: true,
-            forms: true,
-            scroll: true
-        }
-    });
-}
 
 function waitForEnd() {
 	if (taskqueue.isRunning())
@@ -239,12 +215,8 @@ function onChange(type, stat, data) {
 	} else endMe();
 
 	function endMe() {
-		logger.log("Watching for changes...",1);
-		if (reloadFiles) {
-			reloadClient(reloadFiles);
-		} else {
-			reloadClient();
-		}
+		logger.log("Watching for changes...", 1);
+		server.reload(reloadType);
 		fswatch.resume();
 	}
 }
@@ -265,9 +237,9 @@ function runAction(options, config) {
 	}
 	var cloneConfig = _.extend({}, options, config, { dest: dest });
 
-	reloadFiles = false;
-	if (cloneConfig.reloadFiles) {
-		reloadFiles = ["*.css"];	
+	reloadType = "window";
+	if (cloneConfig.reloadType) {
+		reloadType = "css";	
 	}
 	require("./actions/"+config['@action']+".js").perform(cloneConfig);
 	
