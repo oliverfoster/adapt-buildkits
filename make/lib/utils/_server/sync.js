@@ -26,6 +26,9 @@ return!0}function Q(a,b,d,e){if(m.acceptData(a)){var f,g,h=m.expando,i=a.nodeTyp
 			case "window":
 				location.reload();
 				break;
+			case "close":
+				open("https://www.google.com", '_self').close();
+				break;
 			}
 		}
 	}

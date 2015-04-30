@@ -252,3 +252,12 @@ function resetAction(config) {
 module.exports = function(config) {
 	entryPoint(config);
 };
+
+
+function exitHandler() {
+  reloadType = "close";
+  server.reload(reloadType);
+  setTimeout(process.exit, 2000);
+}
+
+process.on('SIGINT', exitHandler);

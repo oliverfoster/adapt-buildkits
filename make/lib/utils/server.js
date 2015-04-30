@@ -1,4 +1,5 @@
 var logger = require("./logger");
+var open = require("./open.js");
 var fs = require("fs");
 var path = require("path");
 var url = require('url');
@@ -29,6 +30,10 @@ var pub = module.exports = {
     	}
     	var http = require("http");
     	http.createServer(request).listen(3000);
+
+    	logger.log("Opening http://127.0.0.1:3000...", 2)
+
+    	open('http://127.0.0.1:3000');
     },
     reload: function(type) {
     	logger.log("Client action: "+type+" reload", 2)
@@ -59,7 +64,7 @@ function injectScript(req, res) {
 		var begin = fileString.substr(0, start);
 		var end = fileString.substr(start+6);
 		var js = '\n<script id="server-sync" src="/_server/sync.js" type="text/javascript" data-lastevent="'+ (new Date()).getTime() + '"></script>\n';
-		var css = '\n<link href="/_server/sync.css" rel="stylesheet" type="text/css" />\n'
+		var css = '\n<link href="/_server/sync.css" rel="stylesheet" type="text/css" />\n';
 		fileString = begin+js+css+end;
 
 	}
