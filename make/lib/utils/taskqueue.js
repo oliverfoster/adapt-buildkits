@@ -18,22 +18,15 @@ var pub =  _.extend(eventEmitter, {
 	isRunning:function() {
 		return (completed < total);
 	},
-	runlog: function(options) {
-		if (options.dynamic === false) {
-			if (options["@displayName"]) console.log(chalk.green(options["@displayName"]));
-		} else {
-			if (options["@displayName"]) console.log(chalk.green(options['course'], options["@displayName"]));
-		}
-	},
-	log: function(text, level) {
-		switch(level) {
-		case 0:
-			console.log(chalk.green(text));
-			break;
-		case 1:
-			console.log(chalk.yellow(text));
-			break;
-		}
+	reset: function() {
+		tasks = [];
+		total = 0;
+		interval = null;
+		running = 0;
+		bar = undefined;
+		displayed = false;
+		completed = 0;
+		maxTasks = 20;
 	},
 	add: function(options, executor) {
 		tasks.push({
@@ -73,6 +66,7 @@ var pub =  _.extend(eventEmitter, {
 			interval = null;
 			console.log();
 			pub.emit("end");
+			pub.removeAllListeners("end");
 		}
 	}
 });
