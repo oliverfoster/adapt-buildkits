@@ -7,7 +7,8 @@ program
   .version('0.0.1')
   .arguments('[env...]')
   .option('-w, --watch', "watch for changes")
-  .option('-f, --force', "watch for changes")
+  .option('-f, --force', "force rebuild")
+  .option('-q, --quick', "skip minification and sourcemapping")
   .action(function (env) {
      items = env;
   });

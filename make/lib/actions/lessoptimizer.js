@@ -1,10 +1,10 @@
 var less = require("less");
 var fsext = require("../utils/fsext");
+var taskqueue = require("../utils/taskqueue.js");
 var path = require("path");
 var fs = require("fs");
 var sourcemapext = require("../utils/sourcemapext.js");
 var _ = require("underscore");
-var chalk = require("chalk");
 
 var defaults = {
 		src: process.cwd(),
@@ -47,7 +47,7 @@ module.exports = function(options) {
 	    }
 	}
 	
-	console.log(chalk.green(">", options['course'], ":", options['@displayName']));
+	taskqueue.runlog(options);
 
 	if (fs.existsSync(options.dest)) fs.unlinkSync(options.dest);
     if (fs.existsSync(options.dest+".map")) fs.unlinkSync(options.dest+".map");
@@ -67,24 +67,36 @@ module.exports = function(options) {
 	
 	}
 
-	var config = _.extend({}, options, { sourceMap: options });
+	options.includeFile = includeFile;
 
-	switch (options.mode) {
-        case "dev":
-            config.compress = false;
-            break;
-        case "build":
-        	delete config.sourceMap;
-        	config.compress = true;
-        } 
+	taskqueue.add(options, function perform(options, done) {
+		var config = _.extend({}, options, { sourceMap: options });
 
-	less.render(includeFile, config, function(error, output) {
-		fsext.mkdirp({dest:path.dirname(options.dest)});
+		switch (options.mode) {
+	        case "dev":
+	        	if (options.switches.quick) delete config.sourceMap;
+	            config.compress = false;
+	            break;
+	        case "build":
+	        	delete config.sourceMap;
+	        	config.compress = !options.switches.quick;
+	        } 
 
-		fs.writeFileSync(options.dest, output.css);
-		if (output.map) {
-			fs.writeFileSync(options.dest + ".map", output.map);
-			if (options.sourceMapRelocate) sourcemapext.relocate(options.dest + ".map", options.sourceMapRelocate);
+
+		less.render(options.includeFile, config, complete);
+
+		function complete(error, output) {
+			fsext.mkdirp({dest:path.dirname(options.dest)});
+
+			fs.writeFileSync(options.dest, output.css);
+			if (output.map) {
+				fs.writeFileSync(options.dest + ".map", output.map);
+				if (options.sourceMapRelocate) sourcemapext.relocate(options.dest + ".map", options.sourceMapRelocate);
+			}
+			done("less", options);
 		}
 	});
+
 };
+
+

@@ -1,10 +1,10 @@
 var requirejs = require('requirejs');
 var fsext = require("../utils/fsext");
+var taskqueue = require("../utils/taskqueue.js");
 var path = require("path");
 var fs = require("fs");
 var sourcemapext = require("../utils/sourcemapext.js");
 var _ = require("underscore");
-var chalk = require("chalk");
 
 var defaults = {
     optimize: "uglify2",
@@ -55,10 +55,8 @@ module.exports = {
                     waitingNonDynamics[options["@name"]] = [];
                 }
             }
-            console.log(chalk.green(">", options['@displayName']));
-        } else {
-            console.log(chalk.green(">", options['course'], ":", options['@displayName']));
         }
+        taskqueue.runlog(options);
 
        
 
@@ -103,52 +101,63 @@ module.exports = {
 
         switch (options.mode) {
         case "dev":
-            options.generateSourceMaps = true;
+            options.generateSourceMaps = !options.switches.quick;
             options.optimize = "none";
             break;
         case "build":
             options.generateSourceMaps = false;
-            options.optimize = "uglify2";
+            options.optimize = !options.switches.quick ? "uglify2" : "none";
         } 
 
-        requirejs.optimize(options, function (buildResponse) {
+        taskqueue.add(options, function perform(options, done) {
+            requirejs.optimize(options, function (buildResponse) {
+                try {
+                    if (options.sourceMapRelocate && options.generateSourceMaps) sourcemapext.relocate(options.dest + ".map", options.sourceMapRelocate);
 
-            if (!options.dynamic) {
-                if (options.generateSourceMaps) {
-                    outputCache[ options['@name'] ] = {
-                        javascript: fs.readFileSync(options.dest),
-                        sourcemap: fs.readFileSync(options.dest) + ".map"
-                    };
-                } else {
-                    outputCache[ options['@name'] ] = {
-                        javascript: fs.readFileSync(options.dest)
-                    };
-                }
-
-                if ( waitingNonDynamics[options["@name"]] ) {
-                    var queue =  waitingNonDynamics[options["@name"]];
-                    for (var i = 0, l = queue.length; i < l; i++) {
-                        var item = queue[i];
-
-                        fsext.mkdirp({dest:path.dirname(item.dest)});
+                    if (!options.dynamic) {
                         if (options.generateSourceMaps) {
-                             fs.writeFileSync(fsext.relative(item.dest) + ".map", outputCache[options["@name"]].sourcemap );
+                            outputCache[ options['@name'] ] = {
+                                javascript: fs.readFileSync(options.dest),
+                                sourcemap: fs.readFileSync(options.dest + ".map")
+                            };
+                        } else {
+                            outputCache[ options['@name'] ] = {
+                                javascript: fs.readFileSync(options.dest)
+                            };
                         }
-                        fs.writeFileSync(fsext.relative(item.dest), outputCache[options["@name"]].javascript );
+
+                        if ( waitingNonDynamics[options["@name"]] ) {
+                            var queue =  waitingNonDynamics[options["@name"]];
+                            for (var i = 0, l = queue.length; i < l; i++) {
+                                var item = queue[i];
+
+                                fsext.mkdirp({dest:path.dirname(item.dest)});
+                                if (options.generateSourceMaps) {
+                                     fs.writeFileSync(fsext.relative(item.dest) + ".map", outputCache[options["@name"]].sourcemap );
+                                }
+                                fs.writeFileSync(fsext.relative(item.dest), outputCache[options["@name"]].javascript );
+                            }
+                        }
+                        
                     }
+                } catch(e) {
+                    console.log(e);
                 }
-                
-            }
 
-            if (options.sourceMapRelocate) sourcemapext.relocate(options.dest + ".map", options.sourceMapRelocate);
+                done("js", options);
 
-        }, function(err) {
-            //optimization err callback
-            console.log(err);
+            }, function(err) {
+                //optimization err callback
+                console.log(err);
+            });
         });
+
+        
     },
     reset: function() {
         outputCache = {};
         waitingNonDynamics = {};
     }
 };
+
+

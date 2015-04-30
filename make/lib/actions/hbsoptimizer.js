@@ -1,9 +1,9 @@
 var handlebars = require("handlebars");
 var fsext = require("../utils/fsext");
+var taskqueue = require("../utils/taskqueue.js");
 var path = require("path");
 var fs = require("fs");
 var _ = require("underscore");
-var chalk = require("chalk");
 
 var defaults = {
 		src: process.cwd(),
@@ -20,7 +20,7 @@ var defaults = {
 module.exports = function(options) {
 	options = _.extend({}, defaults, options);
 
-	var output = "";
+	
 	if (typeof options.src == "string") options.src = [options.src];
 
 	if (fs.existsSync(options.dest) && options.force !== true) {
@@ -46,8 +46,16 @@ module.exports = function(options) {
 	    }
 	}
 
-	console.log(chalk.green(">", options['course'], ":", options['@displayName']));
+	taskqueue.runlog(options);
 
+	taskqueue.add(options, perform);
+
+};
+
+
+function perform(options, done) {
+
+	var output = "";
 	output+="define(";
 	if (options.requires) {
 		output+=JSON.stringify(_.values(options.requires))+",";
@@ -95,5 +103,7 @@ module.exports = function(options) {
 	if (fs.existsSync(options.dest+".map")) fs.unlinkSync(options.dest+".map");
 
 	fsext.mkdirp({dest:path.dirname(options.dest)});
-	fs.writeFileSync(options.dest, output);
-};
+	fs.writeFile(options.dest, output, function() {
+		done("hbs", options);
+	});
+}

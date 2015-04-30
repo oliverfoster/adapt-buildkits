@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-var index = require("./tools/dev.js");
+var index = require("./make/dev.js");

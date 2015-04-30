@@ -1,15 +1,15 @@
 var fsext = require("../utils/fsext.js");
+var taskqueue = require("../utils/taskqueue.js");
 var fs = require("fs");
 var path = require("path");
 var _ = require("underscore");
-var chalk = require("chalk");
 
 
 module.exports = {
 	copy: function(options) {
 		if (options.root === undefined) options.root = "";
 
-		console.log(chalk.green(">", options['course'], ":", options['@displayName']));
+		taskqueue.runlog(options);
 
 		var srcPath = path.join(options.root, options.src);
 
@@ -34,7 +34,18 @@ module.exports = {
 					if (outputStat.mtime >= item.mtime) continue;
 				} 
 
-				fs.createReadStream(item.path).pipe(fs.createWriteStream(outputPath));
+				taskqueue.add({"@name": "copy", src: item.path, dest:outputPath }, function(opts, done) {
+
+					var readStream = fs.createReadStream(opts.src)
+
+					readStream.pipe(fs.createWriteStream(opts.dest));
+
+					readStream.on("end", function() {
+						done("collate", opts);
+					});
+
+				});
+				
 			}
 			
 		}
@@ -42,7 +53,7 @@ module.exports = {
 	collate: function(options) {
 		if (options.root === undefined) options.root = "";
 
-		console.log(chalk.green(">", options['course'], ":", options['@displayName']));
+		taskqueue.runlog(options);
 
 		var srcPath = path.join(options.root, options.src);
 
@@ -66,7 +77,7 @@ module.exports = {
 				}
 			}
 			if (!found) {
-				console.log(chalk.yellow("Removing:", destItem.path.substr(process.cwd().length)));
+				taskqueue.log("Removing: " + destItem.path.substr(process.cwd().length), 1);
 				if (destItem.dir) {
 					fs.rmdirSync(destItem.path);
 				} else {
@@ -94,13 +105,25 @@ module.exports = {
 					if (outputStat.mtime >= item.mtime) continue;
 				} 
 				if (!ifExists) {
-					console.log(chalk.yellow("Adding:", outputPath.substr(process.cwd().length)));
+					taskqueue.log("Adding: " + outputPath.substr(process.cwd().length),1);
+				} else {
+					fs.unlinkSync(outputPath);
 				}
+				taskqueue.add({"@name": "collate", src: item.path, dest:outputPath }, function perform(opts, done) {
+					var readStream = fs.createReadStream(opts.src)
 
-				fs.createReadStream(item.path).pipe(fs.createWriteStream(outputPath));
+					readStream.pipe(fs.createWriteStream(opts.dest));
+
+					readStream.on("end", function() {
+						done("collate", opts);
+					});
+
+
+				});
 			}
 			
 		}
 
+		
 	}
 };

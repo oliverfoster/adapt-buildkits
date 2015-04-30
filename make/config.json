@@ -1,4 +1,19 @@
 {
+	"watches": [
+		{
+			"@name": "bundles-templates",
+			"path": "src",
+			"globs": [
+				"**/templates/**/*.hbs", 
+				"**/templates/**/*.html", 
+				"**/templates/**/*.handlebars", 
+				"**/templates/**/*.htm" 
+			],
+			"actions": [
+				"bundles-handlebars"
+			]
+		}
+	],
 	"actions": [
 		{
 			"@name": "libraries-bundler",
@@ -237,9 +252,9 @@
 		},
 		{
 			"@name": "loader",
-			"@displayName": "Synching tool resources...",
+			"@displayName": "Synching make resources...",
 			"@action": "copy",
-			"root": "tools/res/",
+			"root": "make/res/",
 			"src": "",
 			"globs": [
 				"**/**"
@@ -253,7 +268,7 @@
 			"root": "src",
 			"src": "",
 			"globs": [
-				"!**/tools/**",
+				"!**/make/**",
 				"!**/core/**",
 				"!**/extensions/**",
 				"!**/components/**",
