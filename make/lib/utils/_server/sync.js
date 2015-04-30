@@ -7,10 +7,6 @@ return!0}function Q(a,b,d,e){if(m.acceptData(a)){var f,g,h=m.expando,i=a.nodeTyp
 	var $ = jQuery.noConflict( true );
 
 	var lastEvent = $("#server-sync").data("lastevent");
-	
-	$(function(){
-		$('body').append( $("<iframe src='/_server/iframe.html#"+lastEvent+"'></iframe>") );
-	});
 
 	window.serverSyncData = function(data) {
 		if (typeof data === "object" && data.lastEvent > lastEvent) {
@@ -32,5 +28,16 @@ return!0}function Q(a,b,d,e){if(m.acceptData(a)){var f,g,h=m.expando,i=a.nodeTyp
 			}
 		}
 	}
+
+	function poll() {
+
+		$.get("/_server/_poll/?"+lastEvent, function(data) {
+			window.serverSyncData(data);
+			if (data.lastEvent) lastEvent = data.lastEvent;
+		});
+
+	}
+
+	var pollInterval = setInterval(poll, 500);
 
 })();
