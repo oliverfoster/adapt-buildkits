@@ -16,6 +16,7 @@ function escape(s) {
   return s.replace(/"/g, '\\\"');
 }
 
+console.log("Starting update...");
 open("npm install -g adapt-make", function() {
   open("adapt-make install", function() {
     console.log("Finished updating.");
