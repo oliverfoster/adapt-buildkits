@@ -1,4 +1,3 @@
-var less = require("less");
 var fs = require("fs");
 var fsext = require("./utils/fsext");
 var fswatch = require("./utils/fswatch");

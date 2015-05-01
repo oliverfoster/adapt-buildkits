@@ -1,22 +1,12 @@
-var less = require("less");
 var fsext = require("../utils/fsext");
-var taskqueue = require("../utils/taskqueue.js");
 var logger = require("../utils/logger.js");
 var path = require("path");
 var fs = require("fs");
-var sourcemapext = require("../utils/sourcemapext.js");
 var _ = require("underscore");
 var hbs = require("handlebars");
 
 var defaults = {
-		src: process.cwd(),
-		dest: path.join(process.cwd(), "templates.js"),
-		extensionGlobs: [ "*.hbs", '*.html', "*.handlebars", "*.htm" ],
-		paritalGlobs: [ "**/partial/**" ],
-		requires: {
-			Handlebars: 'handlebars'
-		},
-		context: "Handlebars.templates"
+		
 	};
 
 

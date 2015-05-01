@@ -1,4 +1,4 @@
-var handlebars = require("handlebars");
+var hbs = require("handlebars");
 var fsext = require("../utils/fsext");
 var taskqueue = require("../utils/taskqueue.js");
 var logger = require("../utils/logger.js");
@@ -70,7 +70,7 @@ module.exports = {
 					var file = files[i];
 
 					var contents = fs.readFileSync(file+"").toString();
-					var precompiled = handlebars.precompile(contents);
+					var precompiled = hbs.precompile(contents);
 
 					var isPartial = fsext.globMatch([file], options.paritalGlobs);
 					if (isPartial.length > 0) {
