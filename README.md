@@ -1,3 +1,3 @@
-Adapt Command Line Make Interface
-============================
+Command line builder for Adapt
+==================================
 
