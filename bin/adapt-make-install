@@ -83,7 +83,13 @@ for (var i = 0, l = list.length; i < l; i ++) {
 var waitInterval = setInterval(function() {
 	if (done == list.length) {
 		clearInterval(waitInterval);
-		console.log("Finished ", done, "files copied.");
+		process.chdir("make");
+		var npm = require("npm");
+		npm.load(function(er, npm) {
+			npm.commands.install(function() {
+				console.log("Finished ", done, "files copied.");	
+			});			
+		});
 	}	
 },0);
 
