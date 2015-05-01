@@ -1,8 +1,8 @@
 {
-  "name": "adapt-make",
+  "name": "adapt-maker",
   "version": "0.0.7",
   "description": "Command line builder for Adapt",
-  "main": "./bin/adapt-make.js",
+  "main": "./bin/adapt-maker.js",
   "dependencies": {
     "chalk": "^1.0.0",
     "commander": "^2.8.1",
@@ -13,9 +13,9 @@
   },
   "devDependencies": {},
   "author": "",
-  "repository": "http://github.com/oliverfoster/adapt-make",
+  "repository": "http://github.com/oliverfoster/adapt-maker",
   "license": "GPLv3",
   "bin": {
-    "adapt-make": "./bin/adapt-make"
+    "adapt-maker": "./bin/adapt-maker"
   }
 }
