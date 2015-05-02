@@ -148,8 +148,7 @@ var pub = {
 			begin = parts.join("").replace(/\\/g, "/");
 			
 			begin = orig.substr(0, orig.indexOf(begin));
-			console.log(begin);
-			console.log(orig);
+			if (orig.substr(0,1) == "/") begin = "/";
 
 		} else {
 			if (options.root === undefined) options.root = process.cwd();
@@ -172,7 +171,6 @@ var pub = {
 			var outputPath;
 			if (options.norel){
 				outputPath = path.join(begin, created);
-				console.log(outputPath);
 			} else {
 				outputPath = path.join(options.root, created);;
 			}
