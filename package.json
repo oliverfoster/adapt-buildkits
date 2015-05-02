@@ -1,6 +1,6 @@
 {
   "name": "adapt-buildkits",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Command line BuildKits for Adapt",
   "main": "./bin/adapt-buildkits.js",
   "dependencies": {
@@ -50,6 +50,5 @@
   "directories": {},
   "_resolved": "https://registry.npmjs.org/adapt-buildkits/-/adapt-buildkits-0.0.7.tgz",
   "readme": "Command line BuildKits for Adapt\r\n==================================\r\n\r\n",
-  "readmeFilename": "README.md",
-  "scripts": {}
+  "readmeFilename": "README.md"
 }
