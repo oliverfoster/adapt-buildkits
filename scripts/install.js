@@ -18,7 +18,7 @@ origin.replace(/\\/g, "/");
 var list = fsext.glob( origin, "**");
 
 for (var i = 0, l = list.length; i < l; i ++) {
-	fs.chmodSync(list[i], 0777);
+	fs.chmodSync(list[i].path, 0777);
 }
 
 logger.log("Permission fixed.", 0);

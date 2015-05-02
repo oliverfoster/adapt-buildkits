@@ -1,6 +1,6 @@
 {
   "name": "adapt-buildkits",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Command line BuildKits for Adapt",
   "main": "./bin/adapt-buildkits.js",
   "dependencies": {
@@ -26,7 +26,7 @@
     "url": "https://github.com/oliverfoster/adapt-buildkits/issues"
   },
   "scripts": {
-    "postinstall": "node scripts/install.js"
+    "install": "node scripts/install.js"
   },
   "homepage": "https://github.com/oliverfoster/adapt-buildkits",
   "_id": "adapt-buildkits@0.0.15",
