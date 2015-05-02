@@ -283,14 +283,14 @@
 		},
 		{
 			"@name": "loader",
-			"@displayName": "Synching make resources...",
+			"@displayName": "Synching buildkit resources...",
 			"@action": "copy",
 			"@excludeOnSwitches": [
 				"trackinginsert",
 				"trackingdelete",
 				"trackingreset"
 			],
-			"root": "make/res/",
+			"root": "buildkit/res/",
 			"src": "",
 			"globs": [
 				"**/**"
@@ -309,7 +309,7 @@
 			"root": "src",
 			"src": "",
 			"globs": [
-				"!**/make/**",
+				"!**/buildkit/**",
 				"!**/core/**",
 				"!**/extensions/**",
 				"!**/components/**",
