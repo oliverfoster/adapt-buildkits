@@ -1,6 +1,6 @@
 {
   "name": "adapt-buildkits",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "Command line BuildKits for Adapt",
   "main": "./bin/adapt-buildkits.js",
   "dependencies": {
