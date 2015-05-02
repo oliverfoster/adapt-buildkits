@@ -45,51 +45,54 @@ for (var i = dirs.length -1; i > -1; i--) {
 if (!foundDir) return logger.error("No matching version found.");
 logger.log("Using Adapt Maker version: "+foundDir,0);
 
-origin = path.join(origin, foundDir)
-var list = fsext.glob( origin, "**");
+console.log("NPM Install...");	
+var oldCwd = process.cwd();
+process.chdir( path.join(origin, foundDir) );
+var npm = require("npm");
+npm.load(function(er, npm) {
+	npm.commands.install(function() {
+		console.log("Finished NPM Install.")
+	});			
+});
 
-var done = 0;
 
-for (var i = 0, l = list.length; i < l; i ++) {
-	var item = list[i];
-	var shortenedPath = (item.path).substr(origin.length);
-	var outputPath = path.join(process.cwd(), shortenedPath);
+function copyMaker() {
+	process.chdir(oldCwd);
+	origin = path.join(origin, foundDir)
+	var list = fsext.glob( origin, "**");
 
-	if (item.dir) {
-		fsext.mkdirp({ dest: outputPath });
-		done++;
-	} else {
-		var dirname = path.dirname(outputPath);
-		fsext.mkdirp({ dest: dirname });
+	var done = 0;
 
-		if (fs.existsSync(outputPath)) {
-			var outputStat = fs.statSync(outputPath);
-			if (outputStat.mtime >= item.mtime) {
-				done++;
-				continue;
-			};
-		} 
+	for (var i = 0, l = list.length; i < l; i ++) {
+		var item = list[i];
+		var shortenedPath = (item.path).substr(origin.length);
+		var outputPath = path.join(process.cwd(), shortenedPath);
 
-		var readStream = fs.createReadStream(item.path)
-
-		readStream.pipe(fs.createWriteStream(outputPath));
-
-		readStream.on("end", function() {
+		if (item.dir) {
+			fsext.mkdirp({ dest: outputPath });
 			done++;
-		});
+		} else {
+			var dirname = path.dirname(outputPath);
+			fsext.mkdirp({ dest: dirname });
+
+			if (fs.existsSync(outputPath)) {
+				var outputStat = fs.statSync(outputPath);
+					if (outputStat.mtime >= item.mtime) {
+					done++;
+					continue;
+				};
+			} 
+
+			var readStream = fs.createReadStream(item.path)
+
+			readStream.pipe(fs.createWriteStream(outputPath));
+
+			readStream.on("end", function() {
+				done++;
+				if (done >= list.length) {
+					console.log("Finished ", done, "files copied.");	
+				}
+			});
+		}
 	}
 }
-
-var waitInterval = setInterval(function() {
-	if (done == list.length) {
-		clearInterval(waitInterval);
-		/*process.chdir("make");
-		var npm = require("npm");
-		npm.load(function(er, npm) {
-			npm.commands.install(function() {*/
-				console.log("Finished ", done, "files copied.");	
-			/*});			
-		});*/
-	}	
-},0);
-
