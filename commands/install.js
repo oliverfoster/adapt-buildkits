@@ -52,6 +52,7 @@ var npm = require("npm");
 npm.load(function(er, npm) {
 	npm.commands.install(function() {
 		console.log("Finished NPM Install.")
+		copyMaker();
 	});			
 });
 
