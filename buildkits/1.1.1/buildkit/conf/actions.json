@@ -30,7 +30,7 @@
 			"globs": [ "**/core/js/libraries/*.js" ],
 			"optimize": "uglify2",
     		"generateSourceMaps": true,
-			"sourceMapRelocate": "../../../src/core",
+			"sourceMapRelocate": "../../../src/core/js/",
 			"includes": {
 				"*": {
 					"src/core/js/": [
@@ -82,7 +82,7 @@
 			"name": "app",
 			"optimize": "uglify2",
     		"generateSourceMaps": true,
-			"sourceMapRelocate": "../../../src/core/",
+			"sourceMapRelocate": "../../../src/core/js/",
 			"empties": {
 				"*": {
 					"src/core/js/libraries/": "*.js"
