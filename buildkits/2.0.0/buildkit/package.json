@@ -6,6 +6,9 @@
   "author": "AdaptLearning",
   "license": "GPL v3",
   "devDependencies": {
+    
+  },
+  "dependencies": {
     "chalk": "^1.0.0",
     "commander": "^2.8.1",
     "handlebars": "2.0.0",
@@ -19,6 +22,5 @@
     "requirejs": "^2.1.17",
     "serve-index": "^1.6.3",
     "underscore": "~1.6.0"
-  },
-  "dependencies": {}
+  }
 }
