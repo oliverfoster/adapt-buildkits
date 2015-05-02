@@ -15,7 +15,7 @@ var packageJSON = JSON.parse(fs.readFileSync("package.json"));
 logger.log("Adapt Framework version: "+ packageJSON.version, 0);
 
 
-var origin = path.join(__dirname, "../makers");
+var origin = path.join(__dirname, "../buildkits");
 origin.replace(/\\/g, "/");
 
 var dirs = [];
@@ -32,7 +32,7 @@ dirs.sort(function(a,b) {
 	return 0;
 });
 
-logger.log("Adapt Maker versions available: "+dirs.join(","),0);
+logger.log("Adapt BuildKit versions available: "+dirs.join(","),0);
 
 var foundDir = "";
 for (var i = dirs.length -1; i > -1; i--) {
@@ -43,22 +43,22 @@ for (var i = dirs.length -1; i > -1; i--) {
 }
 
 if (!foundDir) return logger.error("No matching version found.");
-logger.log("Using Adapt Maker version: "+foundDir,0);
+logger.log("Using Adapt BuildKit version: "+foundDir,0);
 
-console.log("Adapt Maker NPM Install...");	
+console.log("Adapt BuildKit NPM Install...");	
 var oldCwd = process.cwd();
 process.chdir( path.join(origin, foundDir) );
 var npm = require("npm");
 npm.load(function(er, npm) {
 	npm.commands.install(function() {
-		console.log("Finished Adapt Maker NPM Install.")
+		console.log("Finished Adapt BuildKit NPM Install.")
 		copyMaker();
 	});			
 });
 
 
 function copyMaker() {
-	console.log("Installing Maker into current directory....")
+	console.log("Installing BuildKit into current directory....")
 	process.chdir(oldCwd);
 	origin = path.join(origin, foundDir)
 	var list = fsext.glob( origin, "**");
@@ -73,17 +73,12 @@ function copyMaker() {
 		if (item.dir) {
 			fsext.mkdirp({ dest: outputPath });
 			done++;
+			if (done >= list.length) {
+				console.log("Finished installing BuildKit.", done, "files copied.");	
+			}
 		} else {
 			var dirname = path.dirname(outputPath);
 			fsext.mkdirp({ dest: dirname });
-
-			if (fs.existsSync(outputPath)) {
-				var outputStat = fs.statSync(outputPath);
-					if (outputStat.mtime >= item.mtime) {
-					done++;
-					continue;
-				};
-			} 
 
 			var readStream = fs.createReadStream(item.path)
 
@@ -92,7 +87,7 @@ function copyMaker() {
 			readStream.on("end", function() {
 				done++;
 				if (done >= list.length) {
-					console.log("Finished installing Maker.", done, "files copied.");	
+					console.log("Finished installing BuildKit.", done, "files copied.");	
 				}
 			});
 		}

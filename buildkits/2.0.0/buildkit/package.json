@@ -1,7 +1,7 @@
 {
-  "name": "adapt-make",
-  "version": "3.0.0",
-  "description": "Adapt Learning course make script",
+  "name": "adapt-buildkit",
+  "version": "2.0.0",
+  "description": "Adapt Learning course BuildKit",
   "scripts": {},
   "author": "AdaptLearning",
   "license": "GPL v3",

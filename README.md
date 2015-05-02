@@ -1,3 +1,3 @@
-Command line builder for Adapt
+Command line BuildKits for Adapt
 ==================================
 

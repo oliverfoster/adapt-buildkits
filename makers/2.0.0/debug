@@ -1,3 +1,0 @@
-#!/usr/bin/env node
-
-var index = require("./make/debug.js");

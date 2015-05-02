@@ -1,7 +1,7 @@
 {
   "name": "adapt-maker",
-  "version": "0.0.13",
-  "description": "Command line builder for Adapt",
+  "version": "0.0.14",
+  "description": "Command line building kits for Adapt",
   "main": "./bin/adapt-maker.js",
   "dependencies": {
     "chalk": "^1.0.0",
