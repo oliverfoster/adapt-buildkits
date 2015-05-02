@@ -1,6 +1,6 @@
 {
   "name": "adapt-maker",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Command line builder for Adapt",
   "main": "./bin/adapt-maker.js",
   "dependencies": {

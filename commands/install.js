@@ -45,19 +45,20 @@ for (var i = dirs.length -1; i > -1; i--) {
 if (!foundDir) return logger.error("No matching version found.");
 logger.log("Using Adapt Maker version: "+foundDir,0);
 
-console.log("NPM Install...");	
+console.log("Adapt Maker NPM Install...");	
 var oldCwd = process.cwd();
 process.chdir( path.join(origin, foundDir) );
 var npm = require("npm");
 npm.load(function(er, npm) {
 	npm.commands.install(function() {
-		console.log("Finished NPM Install.")
+		console.log("Finished Adapt Maker NPM Install.")
 		copyMaker();
 	});			
 });
 
 
 function copyMaker() {
+	console.log("Installing Maker into current directory....")
 	process.chdir(oldCwd);
 	origin = path.join(origin, foundDir)
 	var list = fsext.glob( origin, "**");
@@ -91,7 +92,7 @@ function copyMaker() {
 			readStream.on("end", function() {
 				done++;
 				if (done >= list.length) {
-					console.log("Finished ", done, "files copied.");	
+					console.log("Finished installing Maker.", done, "files copied.");	
 				}
 			});
 		}
