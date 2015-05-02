@@ -31,7 +31,7 @@ module.exports = {
             var destStat = fs.statSync(options.dest);
             var changed = false;
             for (var i = 0, l = files.length; i < l; i++) {
-                if (files[i].mtime > destStat.mtime || files[i].ctime > destStat.mtime) {
+                if (files[i].mtime > destStat.mtime || files[i].ctime > destStat.ctime) {
                     changed = true;
                     break;
                 }
@@ -100,6 +100,7 @@ module.exports = {
                     }
                 }
             }
+           
         }
 
 

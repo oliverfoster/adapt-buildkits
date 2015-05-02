@@ -35,7 +35,7 @@ module.exports = {
 
 				if (fs.existsSync(outputPath) && options.force !== true) {
 					var outputStat = fs.statSync(outputPath);
-					if (outputStat.mtime >= item.mtime) continue;
+					if (outputStat.mtime >= item.mtime && outputStat.ctime >= item.ctime) continue;
 				} 
 
 				taskqueue.add({"@name": "copy", src: item.path, dest:outputPath }, function(opts, done) {

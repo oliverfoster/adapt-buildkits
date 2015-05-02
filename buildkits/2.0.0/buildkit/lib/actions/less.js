@@ -36,7 +36,7 @@ module.exports = {
 			        var files = fsext.glob(options.src[s], options.globs, { dirs: false });
 			        var changed = false;
 			        for (var i = 0, l = files.length; i < l; i++) {
-			            if (files[i].mtime > destStat.mtime || files[i].ctime > destStat.mtime) {
+			            if (files[i].mtime > destStat.mtime || files[i].ctime > destStat.ctime) {
 			                changed = true;
 			                break;
 			            }
