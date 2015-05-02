@@ -1,8 +1,8 @@
 {
-  "name": "adapt-maker",
-  "version": "0.0.14",
-  "description": "Command line building kits for Adapt",
-  "main": "./bin/adapt-maker.js",
+  "name": "adapt-buildkits",
+  "version": "0.0.15",
+  "description": "Command line BuildKits for Adapt",
+  "main": "./bin/adapt-buildkits.js",
   "dependencies": {
     "chalk": "^1.0.0",
     "commander": "^2.8.1",
@@ -15,20 +15,20 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "http://github.com/oliverfoster/adapt-maker"
+    "url": "http://github.com/oliverfoster/adapt-buildkits"
   },
   "license": "GPLv3",
   "bin": {
-    "adapt-maker": "./bin/adapt-maker"
+    "adapt-buildkits": "./bin/adapt-buildkits"
   },
   "gitHead": "2303f38c68311ea71d97d2807dde239f040c6b2d",
   "bugs": {
-    "url": "https://github.com/oliverfoster/adapt-maker/issues"
+    "url": "https://github.com/oliverfoster/adapt-buildkits/issues"
   },
-  "homepage": "https://github.com/oliverfoster/adapt-maker",
-  "_id": "adapt-maker@0.0.7",
+  "homepage": "https://github.com/oliverfoster/adapt-buildkits",
+  "_id": "adapt-buildkits@0.0.7",
   "_shasum": "1759c3848a74bf5b9aa993dfdc47ca315ef15759",
-  "_from": "adapt-maker@",
+  "_from": "adapt-buildkits@",
   "_npmVersion": "1.4.28",
   "_npmUser": {
     "name": "oliver.foster",
@@ -42,8 +42,8 @@
   ],
   "dist": {
     "shasum": "1759c3848a74bf5b9aa993dfdc47ca315ef15759",
-    "tarball": "http://registry.npmjs.org/adapt-maker/-/adapt-maker-0.0.7.tgz"
+    "tarball": "http://registry.npmjs.org/adapt-buildkits/-/adapt-buildkits-0.0.7.tgz"
   },
   "directories": {},
-  "_resolved": "https://registry.npmjs.org/adapt-maker/-/adapt-maker-0.0.7.tgz"
+  "_resolved": "https://registry.npmjs.org/adapt-buildkits/-/adapt-buildkits-0.0.7.tgz"
 }
