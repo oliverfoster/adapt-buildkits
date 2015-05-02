@@ -41,18 +41,29 @@
 						"!swfObject.js",
 						"!consoles.js",
 						"!require.js",
-						"!jquery.v2.js",
-						"!jquery.js"
+						"!jquery.v2.js"
 					]
 				}
 			},
-			"paths": {
-				"jquery": "empty:"
-			},
+			"paths": {},
 			"shim": {
-				"backbone": [
-					"underscore"
-				]
+				"backbone": {
+					"exports": "Backbone",
+					"deps": [
+						"underscore",
+						"jquery"
+					]
+				},
+				"handlebars": {
+					"exports": "Handlebars"
+				},
+				"underscore": {
+					"exports": "_"
+				},
+				"inview": [ "jquery" ],
+				"scrollTo": [ "jquery" ],
+				"imageReady": [ "jquery" ],
+				"velocity": [ "jquery" ]
 			},
 			"dest": "{{outputDest}}/{{course}}/adapt/js/libraries.js"
 		},
@@ -75,11 +86,6 @@
 			"empties": {
 				"*": {
 					"src/core/js/libraries/": "*.js"
-				}
-			},
-			"map": {
-				"*": {
-					"a11y": "jquery.a11y"
 				}
 			},
 			"includes": {
