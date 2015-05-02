@@ -88,9 +88,7 @@ module.exports = {
                     }
                 }
             }
-            console.log("includes");
-            console.log(options.paths);
-            console.log(options.shim);
+            
         }
 
         if (options.empties) {
@@ -102,9 +100,7 @@ module.exports = {
                     }
                 }
             }
-            console.log("empties");
-            console.log(options.paths);
-            console.log(options.shim);
+           
         }
 
 
