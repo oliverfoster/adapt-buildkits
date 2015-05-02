@@ -26,10 +26,12 @@ module.exports = {
 		for (var d = destList.length -1, dl = -1; d > dl; d--) {
 			var destItem = destList[d];
 			var shortenedPathDest = (destItem.path).substr( options.dest.length  );
+			if (shortenedPathDest.substr(0,1) == "/") shortenedPathDest = shortenedPathDest.substr(1);
 			var found = false;
 			for (var i = 0, l = list.length; i < l; i ++) {
 				var srcItem = list[i];
 				var shortenedPathSrc = (srcItem.path).substr( (srcItem.path).indexOf(options.on) + options.on.length  );
+				if (shortenedPathSrc.substr(0,1) == "/") shortenedPathSrc = shortenedPathSrc.substr(1);
 				if (shortenedPathDest == shortenedPathSrc) {
 					found = true;
 					break;
@@ -61,7 +63,7 @@ module.exports = {
 
 				if (ifExists && options.force !== true) {
 					var outputStat = fs.statSync(outputPath);
-					if (outputStat.mtime >= item.mtime) continue;
+					if (outputStat.mtime >= item.mtime && outputStat.ctime >= item.ctime) continue;
 				} 
 				if (!ifExists) {
 					logger.log("Adding: " + outputPath.substr(process.cwd().length),1);
