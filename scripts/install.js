@@ -9,7 +9,8 @@ var semver = require("semver");
 
 
 
-logger.log("Fixing permission on builtkits...", 0);
+logger.log("Fixing permission on buildkits...", 0);
+logger.log("Fixing permission on temp folder...", 0);
 
 
 var origin = path.join(__dirname, "../buildkits");
