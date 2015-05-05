@@ -10,7 +10,10 @@ var url = require("url");
 
 function entryPoint(buildkitName) {
 
-	var adaptVersion = getAdaptVersion();
+	var adaptVersion;
+	if (!buildkitName) {
+		adaptVersion = getAdaptVersion();
+	}
 
 	var availableBuildkits = findAvailableBuildkits();
 
@@ -34,11 +37,12 @@ function entryPoint(buildkitName) {
 		});
 		chosenBuildKit = matchingBuildKitsSorted[0];
 	} else {
-		if (!matchingBuildKits[buildkitName]) {
+		var indexed = _.indexBy(availableBuildkits, "name");
+		if (!indexed[buildkitName]) {
 			logger.error("Buildkit "+buildkitName+" not found.");
 			process.exit(0);
 		}
-		chosenBuildKit = matchingBuildKits[buildkitName];
+		chosenBuildKit = indexed[buildkitName];
 	}
 
 	logger.log("Trying Adapt BuildKit version: \n '"+chosenBuildKit.name+"'\n",0);
@@ -111,6 +115,8 @@ function checkBuildKitUpToDate(buildkit, callback, that) {
 					callback.call(that);
 				}
 			}, this);
+		} else {
+			callback.call(that);
 		}
 	} else {
 		downloadBuildKit(buildkit, callback, that);
@@ -186,16 +192,41 @@ function installBuildKit(buildkit) {
 	origin.replace(/\\/g, "/");
 
 	var oldCwd = process.cwd();
-	process.chdir( origin );
-	if (fs.existsSync("package.json")) {
-		npmInstall(copyMaker, this, oldCwd, buildkit);
-	} else if (fs.existsSync("buildkit")) {
-		process.chdir( path.join(origin, "buildkit") );
-		npmInstall(copyMaker, this, oldCwd, buildkit);
+	if (buildkit.npmInstall) {
+		if (buildkit.node_modulesCache) {
+
+			process.chdir( origin );
+			if (fs.existsSync("package.json")) {
+				npmInstall(function() {
+					copyMaker(finished, this, buildkit);
+				}, this, oldCwd, buildkit);
+			} else if (fs.existsSync("buildkit")) {
+				process.chdir( path.join(origin, "buildkit") );
+				npmInstall(function() {
+					copyMaker(finished, this, buildkit);
+				}, this, oldCwd, buildkit);
+			} else {
+				copyMaker(finished, this, buildkit);
+			}
+
+		} else {
+
+			copyMaker(function() {
+				if (fs.existsSync("package.json")) {
+					npmInstall(finished, this, oldCwd, buildkit);
+				} else if (fs.existsSync("buildkit")) {
+					process.chdir( path.join(process.cwd(), "buildkit") );
+					npmInstall(finished, this, oldCwd, buildkit);
+				}
+			}, this, buildkit);
+
+		}
 	} else {
-		
+		copyMaker(finished, this, buildkit);
+	}
 
-
+	function finished() {
+		console.log ("Done.");
 	}
 }
 
@@ -218,12 +249,10 @@ function npmInstall(callback, that, oldCwd, buildkit) {
 }
 
 
-function copyMaker(callback, that, oldCwd, buildkit) {
+function copyMaker(callback, that, buildkit) {
 	console.log("Installing BuildKit into current directory....")
 	var origin = path.join(__dirname, "../buildkits", buildkit.name);
 	origin.replace(/\\/g, "/");
 
-	fsext.copy(origin, process.cwd(), buildkit.copyGlobs, function() {
-		console.log("\nDone.");
-	}, this);
+	fsext.copy(origin, process.cwd(), buildkit.copyGlobs, callback, this);
 }

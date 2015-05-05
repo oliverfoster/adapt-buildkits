@@ -12,8 +12,23 @@ var origin;
 var foundDir;
 function entryPoint() {
 
+	var availableBuildkits = findAvailableBuildkits();
 
-	origin = path.join(__dirname, "../buildkits");
+	var output = "";
+	_.each(availableBuildkits, function(item) {
+		output += "\tBuildKit: "+item.name + "\n";
+		output += "\tSupports Framework: " + item.frameworkSupport+"\n";
+		output += "\n";
+	});
+	logger.log("\nAdapt BuildKit versions found:\n\n"+output+"\n",0);
+
+}
+
+function findAvailableBuildkits() {
+	var buildKitsConfig = JSON.parse(fs.readFileSync( path.join(__dirname, "../conf/buildkits.json") ));
+	var indexed = _.indexBy(buildKitsConfig, "name");
+
+	var origin = path.join(__dirname, "../buildkits");
 	origin.replace(/\\/g, "/");
 
 	var dirs = [];
@@ -21,19 +36,13 @@ function entryPoint() {
 		for (var i = 0, l = rdirs.length; i < l; i++ ) {
 			rdirs[i] = rdirs[i].replace(/\\/g, "/");
 			var ver = rdirs[i].substr(origin.length+1);
-			dirs.push(ver);
+			
+			if (!indexed[ver]) continue;
+			indexed[ver].installed = true;
 		}
 	});
-	dirs.sort(function(a,b) {
-		if (!semver.valid(a) && !semver.valid(b)) return 0;
-		if (!semver.valid(a) && semver.valid(b)) return -1;
-		if (semver.valid(a) && !semver.valid(b)) return 1;
-		if (semver.gt(a,b)) return 1;
-		if (semver.lt(a,b)) return -1;
-		return 0;
-	});
 
-	logger.log("\nAdapt BuildKit versions found:\n '"+dirs.join("', '")+"'\n",0);
+	return indexed;
 }
 
 module.exports = entryPoint;
