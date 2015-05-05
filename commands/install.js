@@ -6,21 +6,70 @@ var fsext = require("../lib/fsext.js");
 var logger = require("../lib/logger.js");
 var _ = require("underscore");
 var semver = require("semver");
+var url = require("url");
 
-var oldCwd;
-var origin;
-var foundDir;
 function entryPoint(buildkitName) {
 
+	var adaptVersion = getAdaptVersion();
 
-	if (!fs.existsSync("package.json")) {
-		return logger.error("No Adapt Framework package.json available!");
+	var availableBuildkits = findAvailableBuildkits();
+
+	logger.log("Adapt BuildKit versions found:\n '"+_.keys(availableBuildkits).join("', '")+"'\n",0);
+
+	var matchingBuildKits = findMatchingBuildKits(availableBuildkits, adaptVersion);
+	
+	var chosenBuildKit;
+	if (!buildkitName) {
+		
+		if (_.keys(matchingBuildKits).length === 0) {
+			logger.error("No compatible buildkits found.");
+			process.exit(0);
+		}
+		
+		logger.log("Compatible BuildKit versions found:\n '"+_.keys(matchingBuildKits).join("', '")+"'\n",0);
+		
+		var matchingBuildKitsSorted;
+		matchingBuildKitsSorted = _.values(matchingBuildKits).sort(function(a,b) {
+			return a.priority - b.priority;
+		});
+		chosenBuildKit = matchingBuildKitsSorted[0];
+	} else {
+		if (!matchingBuildKits[buildkitName]) {
+			logger.error("Buildkit "+buildkitName+" not found.");
+			process.exit(0);
+		}
+		chosenBuildKit = matchingBuildKits[buildkitName];
 	}
+
+	logger.log("Trying Adapt BuildKit version: \n '"+chosenBuildKit.name+"'\n",0);
+
+	checkBuildKitUpToDate(chosenBuildKit, function() {
+
+		installBuildKit(chosenBuildKit);
+
+	}, this);
+
+	
+}
+module.exports = entryPoint;
+
+function getAdaptVersion() {
+	if (!fs.existsSync("package.json")) {
+		logger.error("No Adapt Framework package.json available!");
+		exit(0);
+	}
+	
 	var packageJSON = JSON.parse(fs.readFileSync("package.json"));
 	logger.log("\nAdapt Framework version found: \n '"+ packageJSON.version+"'\n", 0);
 
+	return  packageJSON.version;
+}
 
-	origin = path.join(__dirname, "../buildkits");
+function findAvailableBuildkits() {
+	var buildKitsConfig = JSON.parse(fs.readFileSync( path.join(__dirname, "../conf/buildkits.json") ));
+	var indexed = _.indexBy(buildKitsConfig, "name");
+
+	var origin = path.join(__dirname, "../buildkits");
 	origin.replace(/\\/g, "/");
 
 	var dirs = [];
@@ -28,57 +77,131 @@ function entryPoint(buildkitName) {
 		for (var i = 0, l = rdirs.length; i < l; i++ ) {
 			rdirs[i] = rdirs[i].replace(/\\/g, "/");
 			var ver = rdirs[i].substr(origin.length+1);
-			dirs.push(ver);
+			
+			if (!indexed[ver]) continue;
+			indexed[ver].installed = true;
 		}
 	});
-	dirs.sort(function(a,b) {
-		if (!semver.valid(a) && !semver.valid(b)) return 0;
-		if (!semver.valid(a) && semver.valid(b)) return -1;
-		if (semver.valid(a) && !semver.valid(b)) return 1;
-		if (semver.gt(a,b)) return 1;
-		if (semver.lt(a,b)) return -1;
-		return 0;
-	});
 
-	logger.log("Adapt BuildKit versions found:\n '"+dirs.join("', '")+"'\n",0);
+	return indexed;
+}
 
-	foundDir = "";
-	if (!buildkitName) {
-		for (var i = dirs.length -1; i > -1; i--) {
-			if (semver.valid(dirs[i])) {
-				if (semver.satisfies(packageJSON.version, ">="+dirs[i])) {
-					foundDir = dirs[i];
-					break;
-				}
-			}
-		}
-	} else {
-		logger.log("Trying Adapt BuildKit version: \n '"+buildkitName+"'\n",0);
-		if (dirs.indexOf(buildkitName) > 0) {
-			foundDir = buildkitName;
+function findMatchingBuildKits(availableBuildkits, adaptVersion) {
+	var matching = {};
+	for (var k in availableBuildkits) {
+		if (semver.satisfies(adaptVersion, availableBuildkits[k].frameworkSupport)) {
+			matching[availableBuildkits[k].name] = availableBuildkits[k];
 		}
 	}
+	return matching;
+}
 
-	if (!foundDir) return logger.error("No matching version found.");
-	logger.log("Using Adapt BuildKit version: \n '"+foundDir+"'\n",0);
+function checkBuildKitUpToDate(buildkit, callback, that) {
+	if (buildkit.installed) {
+		if (buildkit.versionFile && buildkit.versionFileUrl) {
+			var versionFilePath = path.join(__dirname, "../buildkits", buildkit.name, buildkit.versionFile);
+			var versionJSON = JSON.parse(fs.readFileSync(versionFilePath));
 
-
-	oldCwd = process.cwd();
-	process.chdir( path.join(origin, foundDir) );
-
-	if (fs.existsSync("package.json")) {
-		npmInstall();
-	} else if (fs.existsSync("buildkit")) {
-		process.chdir( path.join(origin, foundDir, "buildkit") );
-		npmInstall()
+			getBuildCurrentVersion(buildkit, function(version) {
+				if (semver.gt(versionJSON.version, version)) {
+					logger.log("'" + buildkit.name + "' BuildKit version out of date at v"+versionJSON.version + " downloading v"+version+"\n", 1);
+					downloadBuildKit(buildkit, callback, that);
+				} else {
+					logger.log("'" + buildkit.name + "' BuildKit version is current at v"+versionJSON.version+"\n", 0);
+					callback.call(that);
+				}
+			}, this);
+		}
 	} else {
-		copyMaker();
+		downloadBuildKit(buildkit, callback, that);
 	}
 }
-module.exports = entryPoint;
 
-function npmInstall() {
-	console.log("Adapt BuildKit NPM Install...");	
+function getBuildCurrentVersion(buildkit, callback, that) {
+	var tempPath = path.join(__dirname, "../temp", buildkit.name);
+		
+	if (fs.existsSync(tempPath)) fsext.rm(tempPath);
+	if (!fs.existsSync(tempPath)) fsext.mkdirp({dest:tempPath, norel: true});
+
+	var downloadFileName = tempPath+"/version.json";
+	fsext.rm(downloadFileName);
+
+	download(buildkit.versionFileUrl, downloadFileName, function() {
+		
+		var versionJSON = JSON.parse(fs.readFileSync(downloadFileName));
+		callback.call(that, versionJSON.version);
+
+	}, this, true);
+}
+
+function downloadBuildKit(buildkit, callback, that) {
+	var tempPath = path.join(__dirname, "../temp", buildkit.name);
+	var outputPath = path.join(__dirname, "../buildkits", buildkit.name);
+	
+	if (fs.existsSync(tempPath)) fsext.rm(tempPath);
+	if (!fs.existsSync(tempPath)) fsext.mkdirp({dest:tempPath, norel: true});
+
+	var downloadFileName = tempPath+"/download.tar.gz";
+
+	download(buildkit.tarballUrl, downloadFileName, function() {
+		var targz = require("tar.gz");
+		var compress = new targz().extract(downloadFileName, tempPath , function(err){
+			fsext.walkSync(tempPath, function(dirs, files) {
+				fsext.copy(dirs[0].path, outputPath, [ "**", ".*"], callback, that);
+			}, this);
+		});
+	}, this);
+}
+
+function download(locationUrl, outputFileName, callback, that, isText) {
+	var https = require("https");
+	var urlParsed = url.parse(locationUrl);
+	var req = https.request({
+		hostname: urlParsed.hostname,
+		port: 443,
+		protocol: urlParsed.protocol,
+		path: urlParsed.path,
+		method: "GET"
+	}, function(res) {
+		if (res.headers.location) {
+			return download(res.headers.location, outputFileName, callback, that);
+		}
+		var outputStream = fs.createWriteStream( outputFileName );
+		res.pipe(outputStream);
+		res.on("end", function() {
+			setTimeout(function() {
+				callback.call(that);
+			}, 500);
+		});
+	});
+	req.on("error", function(e) {
+		console.log(e);
+		process.exit(0);
+	});
+	req.end();
+}
+
+function installBuildKit(buildkit) {
+	var origin = path.join(__dirname, "../buildkits", buildkit.name);
+	origin.replace(/\\/g, "/");
+
+	var oldCwd = process.cwd();
+	process.chdir( origin );
+	if (fs.existsSync("package.json")) {
+		npmInstall(copyMaker, this, oldCwd, buildkit);
+	} else if (fs.existsSync("buildkit")) {
+		process.chdir( path.join(origin, "buildkit") );
+		npmInstall(copyMaker, this, oldCwd, buildkit);
+	} else {
+		
+
+
+	}
+}
+
+function npmInstall(callback, that, oldCwd, buildkit) {
+	var args = arguments;
+	console.log("BuildKit NPM Install...\n");	
 	process.umask(0000);
 	var npm = require("npm");
 	npm.load(function(er, npm) {
@@ -87,80 +210,20 @@ function npmInstall() {
 				console.log(er, data);
 				process.exit(1)
 			}
-			console.log("Finished Adapt BuildKit NPM Install.")
-			copyMaker();
+			process.chdir( oldCwd );
+			console.log("\nFinished BuildKit NPM Install.\n")
+			callback.apply(that, args);
 		});			
 	});
 }
 
 
-
-var done = 0;
-
-function copyMaker() {
+function copyMaker(callback, that, oldCwd, buildkit) {
 	console.log("Installing BuildKit into current directory....")
-	process.chdir(oldCwd);
-	origin = path.join(origin, foundDir)
-	var list = fsext.glob( origin, "**");
+	var origin = path.join(__dirname, "../buildkits", buildkit.name);
+	origin.replace(/\\/g, "/");
 
-	for (var i = 0, l = list.length; i < l; i ++) {
-		var item = list[i];
-		var shortenedPath = (item.path).substr(origin.length);
-		var outputPath = path.join(process.cwd(), shortenedPath);
-
-		if (item.dir) {
-			fsext.mkdirp({ dest: outputPath });
-			done++;
-		} else {
-			var dirname = path.dirname(outputPath);
-			fsext.mkdirp({ dest: dirname });
-
-			addCopyTask(item.path, outputPath);
-		}
-	}
-}
-
-var copyTasks = [];
-var limit = 20;
-var currentRunning = 0;
-var copyInterval = null;
-
-function addCopyTask(from, to) {
-	copyTasks.push({
-		from: from,
-		to: to
-	});
-	copyStart();
-}
-function copyStart() {
-	if (copyInterval !== null) return;
-	copyInterval = setInterval(runCopyTasks);
-}
-function runCopyTasks() {
-	if (currentRunning >= limit) return;
-	for (var i = 0, l = copyTasks.length; i < l && currentRunning < limit; i++) {
-		var task = copyTasks.shift();
-		copy(task.from, task.to);
-	}
-	
-}
-function copyFinish() {
-	if (copyInterval === null) return;
-	clearInterval(copyInterval);
-}
-
-function copy(from, to) {
-	currentRunning++;
-	var readStream = fs.createReadStream(from)
-
-	readStream.pipe(fs.createWriteStream(to));
-
-	readStream.on("end", function() {
-		done++;
-		currentRunning--;
-		if (copyTasks.length === 0 && currentRunning <= 0) {
-			copyFinish();
-			console.log("Finished installing BuildKit.", done, "files copied.");	
-		}
-	});
+	fsext.copy(origin, process.cwd(), buildkit.copyGlobs, function() {
+		console.log("\nDone.");
+	}, this);
 }

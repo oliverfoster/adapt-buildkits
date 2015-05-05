@@ -1,7 +1,0 @@
-{
-	"defaults": {
-		"multipleDestPath":  "./builds",
-		"singleDestPath": "./build",
-		"srcCoursesPath": "./src/courses"
-	}
-}

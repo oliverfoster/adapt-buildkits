@@ -1,6 +1,6 @@
 {
   "name": "adapt-buildkits",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "Command line BuildKits for Adapt",
   "main": "./bin/adapt-buildkits.js",
   "dependencies": {
@@ -9,6 +9,7 @@
     "minimatch": "^2.0.4",
     "npm": "^2.9.0",
     "semver": "^4.3.3",
+    "tar.gz": "^0.1.1",
     "underscore": "~1.6.0"
   },
   "devDependencies": {},
