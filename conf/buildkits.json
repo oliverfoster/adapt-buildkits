@@ -12,7 +12,9 @@
 		"copyGlobs": [
 			"**",
 			".*",
-			"!.gitignore"
+			"!.gitignore",
+			"!.gitattributes",
+			"!README.md"
 		]
 	},
 	{
