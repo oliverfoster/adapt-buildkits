@@ -110,7 +110,7 @@ function checkBuildKitUpToDate(buildkit, callback, that) {
 			var versionJSON = JSON.parse(fs.readFileSync(versionFilePath));
 
 			getBuildCurrentVersion(buildkit, function(version) {
-				if (semver.gt(versionJSON.version, version)) {
+				if (semver.lt(versionJSON.version, version)) {
 					logger.log("'" + buildkit.name + "' BuildKit version out of date at v"+versionJSON.version + " downloading v"+version+"\n", 1);
 					downloadBuildKit(buildkit, callback, that);
 				} else {
@@ -135,7 +135,7 @@ function getBuildCurrentVersion(buildkit, callback, that) {
 	var downloadFileName = tempPath+"/version.json";
 	fsext.rm(downloadFileName);
 
-	download(buildkit.versionFileUrl, downloadFileName, function() {
+	download(buildkit.versionFileUrl+"?t="+(new Date()).getTime(), downloadFileName, function() {
 		
 		var versionJSON = JSON.parse(fs.readFileSync(downloadFileName));
 		callback.call(that, versionJSON.version);
