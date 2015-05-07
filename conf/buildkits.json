@@ -15,6 +15,9 @@
 			"!.gitignore",
 			"!.gitattributes",
 			"!README.md"
+		],
+		"executableGlobs": [
+			"make"
 		]
 	},
 	{

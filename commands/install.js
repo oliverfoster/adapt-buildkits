@@ -17,7 +17,9 @@ function entryPoint(buildkitName) {
 
 	var availableBuildkits = findAvailableBuildkits();
 
-	logger.log("Adapt BuildKit versions found:\n '"+_.keys(availableBuildkits).join("', '")+"'\n",0);
+	logger.log((!buildkitName ? "":"\n")+"Adapt BuildKit versions found:\n '"+_.keys(availableBuildkits).join("', '")+"'\n",0);
+
+	require("../commands/uninstall.js")(true);
 
 	var matchingBuildKits = findMatchingBuildKits(availableBuildkits, adaptVersion);
 	
@@ -46,6 +48,7 @@ function entryPoint(buildkitName) {
 	}
 
 	logger.log("Trying Adapt BuildKit version: \n '"+chosenBuildKit.name+"'\n",0);
+
 
 	checkBuildKitUpToDate(chosenBuildKit, function() {
 
@@ -232,7 +235,7 @@ function installBuildKit(buildkit) {
 
 function npmInstall(callback, that, oldCwd, buildkit) {
 	var args = arguments;
-	console.log("BuildKit NPM Install...\n");	
+	console.log("Adapt BuildKit NPM Install...\n");	
 	process.umask(0000);
 	var npm = require("npm");
 	npm.load(function(er, npm) {
@@ -242,7 +245,7 @@ function npmInstall(callback, that, oldCwd, buildkit) {
 				process.exit(1)
 			}
 			process.chdir( oldCwd );
-			console.log("\nFinished BuildKit NPM Install.\n")
+			console.log("\n");
 			callback.apply(that, args);
 		});			
 	});
@@ -250,9 +253,48 @@ function npmInstall(callback, that, oldCwd, buildkit) {
 
 
 function copyMaker(callback, that, buildkit) {
-	console.log("Installing BuildKit into current directory....")
+	console.log("Installing Adapt BuildKit into current directory...\n")
 	var origin = path.join(__dirname, "../buildkits", buildkit.name);
-	origin.replace(/\\/g, "/");
+	origin = origin.replace(/\\/g, "/");
 
-	fsext.copy(origin, process.cwd(), buildkit.copyGlobs, callback, this);
+	fsext.copy(origin, process.cwd(), buildkit.copyGlobs, function() {
+		makeUninstaller(buildkit);
+		setPermissions(callback, that, buildkit);
+	}, this);
+
+	
+}
+
+function makeUninstaller(buildkit) {
+	console.log("Making uninstall file...\n")
+	var origin = path.join(__dirname, "../buildkits", buildkit.name);
+	origin = origin.replace(/\\/g, "/");
+
+	var list = fsext.glob( origin, buildkit.copyGlobs );
+	var items = [];
+	for (var i = 0, item; item = list[i++];) {
+		items.push(item.path.substr(origin.length+1));
+	}
+
+	if (buildkit.node_modulesCache == false && buildkit.npmInstall == true) {
+		items.push("node_modules");
+	}
+
+	buildkit.installed = items;
+
+	var file = JSON.stringify(buildkit, null, "\t");
+	fs.writeFileSync(".buildkit", file);
+}
+
+
+function setPermissions(callback, that, buildkit) {
+	if (buildkit.executableGlobs) {
+		console.log("Setting permissions on BuildKit in current directory...\n")
+		var list = fsext.glob( process.cwd(), buildkit.executableGlobs );
+
+		for (var i = 0, l = list.length; i < l; i ++) {
+			fs.chmodSync(list[i].path, 0777);
+		}
+	}
+	callback.call(that);
 }
