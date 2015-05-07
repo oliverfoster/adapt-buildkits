@@ -1,1 +1,2 @@
 bin/adapt-buildkits text eol=lf
+scripts/install.js text eol=lf
