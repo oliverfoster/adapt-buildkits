@@ -1,9 +1,9 @@
 [
 	{
-		"name": "kineo-native",
-		"repoUrl": "https://github.com/oliverfoster/adapt-buildkit-native",
-		"versionFileUrl": "https://raw.githubusercontent.com/oliverfoster/adapt-buildkit-native/master/buildkit/package.json",
-		"tarballUrl": "https://github.com/oliverfoster/adapt-buildkit-native/archive/master.tar.gz",
+		"name": "kineo-rub",
+		"repoUrl": "https://github.com/oliverfoster/adapt-buildkit-rub",
+		"versionFileUrl": "https://raw.githubusercontent.com/oliverfoster/adapt-buildkit-rub/master/buildkit/package.json",
+		"tarballUrl": "https://github.com/oliverfoster/adapt-buildkit-rub/archive/master.tar.gz",
 		"versionFile": "buildkit/package.json",
 		"frameworkSupport": "1.1.1 - 2.0.x",
 		"priority": 0,
@@ -16,7 +16,7 @@
 			"!README.md"
 		],
 		"executableGlobs": [
-			"make"
+			"rub"
 		]
 	},
 	{
