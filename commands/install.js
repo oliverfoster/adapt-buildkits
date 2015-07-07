@@ -168,12 +168,13 @@ var pub = {
 
 		var downloadFileName = tempPath+"/download.tar.gz";
 
-		logger.log("Downloading Buildkit...\n", 0);
+		logger.log("Caching Buildkit:", 0);
+		logger.log("Downloading Buildkit...", 0);
 		pub.download(buildkit.tarballUrl, downloadFileName, function() {
-			logger.log("Extracting Buildkit...\n",0);
+			logger.log("Extracting Buildkit...",0);
 			var targz = require("tar.gz");
 			var compress = new targz().extract(downloadFileName, tempPath , function(err){
-				logger.log("Caching Buildkit...\n", 0);
+				logger.log("Moving Buildkit...\n", 0);
 				var lists = fsext.list(tempPath);
 				fsext.copy(lists.dirs[0].path, outputPath, [ "**", ".*"], callback, that);
 			});
