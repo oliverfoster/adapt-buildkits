@@ -1,3 +1,5 @@
 /node_modules
-/buildkits/*
+/buildkits/**
+!/buildkits/.ignore
 /temp/**
+!/temp/.ignore
