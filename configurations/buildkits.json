@@ -1,6 +1,6 @@
 [
 	{
-		"name": "kineo-rub",
+		"name": "rub",
 		"repoUrl": "https://github.com/oliverfoster/adapt-buildkit-rub",
 		"versionFileUrl": "https://raw.githubusercontent.com/oliverfoster/adapt-buildkit-rub/master/buildkit/package.json",
 		"tarballUrl": "https://github.com/oliverfoster/adapt-buildkit-rub/archive/master.tar.gz",
@@ -22,7 +22,7 @@
 		]
 	},
 	{
-		"name": "kineo-gulp",
+		"name": "gulp",
 		"versionFileUrl": "https://raw.githubusercontent.com/cgkineo/adapt-buildkit-gulp/master/package.json",
 		"versionFile": "package.json",
 		"repoUrl": "https://github.com/cgkineo/adapt-buildkit-gulp",
@@ -38,7 +38,7 @@
 		]
 	},
 	{
-		"name": "kineo-grunt",
+		"name": "grunt",
 		"versionFileUrl": "https://raw.githubusercontent.com/cgkineo/adapt-buildkit-grunt/master/package.json",
 		"versionFile": "package.json",
 		"repoUrl": "https://github.com/cgkineo/adapt-buildkit-grunt",
