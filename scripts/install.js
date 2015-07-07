@@ -2,8 +2,8 @@
 
 var path = require("path");
 var fs = require("fs");
-var fsext = require("../lib/fsext.js");
-var logger = require("../lib/logger.js");
+var fsext = require("../libraries/fsext.js");
+var logger = require("../libraries/logger.js");
 var _ = require("underscore");
 var semver = require("semver");
 

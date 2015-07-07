@@ -16,18 +16,9 @@
 			"!README.md"
 		],
 		"executableGlobs": [
+			"**/ffprobe-linux",
+			"**/ffprobe-mac",
 			"rub"
-		]
-	},
-	{
-		"name": "adaptlearning-grunt-1.1.1",
-		"frameworkSupport": "1.1.1",
-		"priority": 1,
-		"node_modulesCache": false,
-		"npmInstall": true,
-		"copyGlobs": [
-			"**",
-			"package.json"
 		]
 	},
 	{
@@ -36,7 +27,7 @@
 		"versionFile": "package.json",
 		"repoUrl": "https://github.com/cgkineo/adapt-buildkit-gulp",
 		"tarballUrl": "https://github.com/cgkineo/adapt-buildkit-gulp/archive/master.tar.gz",
-		"frameworkSupport": "2.0.0",
+		"frameworkSupport": "1.2.1",
 		"node_modulesCache": false,
 		"npmInstall": true,
 		"priority": 1,
@@ -52,20 +43,10 @@
 		"versionFile": "package.json",
 		"repoUrl": "https://github.com/cgkineo/adapt-buildkit-grunt",
 		"tarballUrl": "https://github.com/cgkineo/adapt-buildkit-grunt/archive/master.tar.gz",
-		"frameworkSupport": "2.0.0",
+		"frameworkSupport": "1.2.1",
 		"node_modulesCache": false,
 		"npmInstall": true,
 		"priority": 2,
-		"copyGlobs": [
-			"**"
-		]
-	},
-	{
-		"name": "adaptlearning-grunt-2.0.0",
-		"frameworkSupport": "2.0.0",
-		"priority": 3,
-		"node_modulesCache": false,
-		"npmInstall": true,
 		"copyGlobs": [
 			"**"
 		]

@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 process.umask(0000);
-var terminal = require("../lib/terminal.js");
+var terminal = require("../libraries/terminal.js");

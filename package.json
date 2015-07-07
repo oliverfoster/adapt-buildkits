@@ -1,16 +1,18 @@
 {
   "name": "adapt-buildkits",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "description": "Command line BuildKits for Adapt",
   "main": "./bin/adapt-buildkits.js",
   "dependencies": {
     "chalk": "^1.0.0",
     "commander": "^2.8.1",
     "minimatch": "^2.0.4",
+    "handlebars": "2.0.0",
     "npm": "^2.9.0",
     "semver": "^4.3.3",
     "tar.gz": "^0.1.1",
-    "underscore": "~1.6.0"
+    "underscore": "~1.6.0",
+    "osenv": "^0.1.0"
   },
   "devDependencies": {},
   "author": "",
