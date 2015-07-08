@@ -1,4 +1,4 @@
-Command line BuildKits for Adapt
+Command line Buildkit installer for Adapt Framework
 ==================================
 
 To install this utility:
@@ -17,7 +17,7 @@ To list the available buildkits:
 adapt-buildkit list
 ```
 
-To uninstall a buildkit from you Adapt Framework directory:
+To uninstall a buildkit from your Adapt Framework directory:
 ```
 adapt-buildkit uninstall
 ```
