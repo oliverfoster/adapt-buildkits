@@ -114,6 +114,9 @@ var pub = {
 			//if buildkit is installed, check that it is up to date
 			if (buildkit.versionFile && buildkit.versionFileUrl) {
 				var versionFilePath = path.join(__dirname, "../buildkits", buildkit.name, buildkit.versionFile);
+				if (!fs.existsSync(versionFilePath)) {
+					return pub.downloadBuildkit(buildkit, callback, that);
+				}
 				var versionJSON = JSON.parse(fs.readFileSync(versionFilePath));
 
 				pub.getBuildCurrentVersion(buildkit, function(version) {
@@ -153,6 +156,7 @@ var pub = {
 		pub.download(buildkit.versionFileUrl+"?t="+(new Date()).getTime(), downloadFileName, function() {
 			
 			var versionJSON = JSON.parse(fs.readFileSync(downloadFileName));
+			fsext.rm(downloadFileName);
 			callback.call(that, versionJSON.version);
 
 		}, this, true);
@@ -164,6 +168,7 @@ var pub = {
 		var outputPath = path.join(__dirname, "../buildkits", buildkit.name);
 		
 		if (fs.existsSync(tempPath)) fsext.rm(tempPath);
+		if (fs.existsSync(outputPath)) fsext.rm(outputPath);
 		if (!fs.existsSync(tempPath)) fsext.mkdir(tempPath, {norel: true});
 
 		var downloadFileName = tempPath+"/download.tar.gz";
