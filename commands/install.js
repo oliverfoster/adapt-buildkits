@@ -114,6 +114,7 @@ var pub = {
 			//if buildkit is installed, check that it is up to date
 			if (buildkit.versionFile && buildkit.versionFileUrl) {
 				var versionFilePath = path.join(__dirname, "../buildkits", buildkit.name, buildkit.versionFile);
+				
 				if (!fs.existsSync(versionFilePath)) {
 					return pub.downloadBuildkit(buildkit, callback, that);
 				}
@@ -181,7 +182,10 @@ var pub = {
 			var compress = new targz().extract(downloadFileName, tempPath , function(err){
 				logger.log(" Caching...\n", 0);
 				var lists = fsext.list(tempPath);
-				fsext.copy(lists.dirs[0].path, outputPath, [ "**", ".*"], callback, that);
+				fsext.copy(lists.dirs[0].path, outputPath, [ "**", ".*"], function() {
+					if (fs.existsSync(downloadFileName)) fsext.rm(downloadFileName);
+					callback.call(that);
+				}, that);
 			});
 		}, this);
 	},
