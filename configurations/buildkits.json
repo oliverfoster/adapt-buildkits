@@ -16,8 +16,8 @@
 			"!README.md"
 		],
 		"executableGlobs": [
-			"**/ffprobe-linux",
-			"**/ffprobe-mac",
+			"**/util-ffprobe-linux",
+			"**/util-ffprobe-mac",
 			"rub"
 		]
 	},
