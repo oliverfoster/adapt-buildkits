@@ -317,7 +317,7 @@ var pub = {
 	setPermissions: function (callback, that, buildkit) {
 		if (buildkit.executableGlobs) {
 			console.log("Correcting permissions...\n")
-			var list = fsext.glob( process.cwd(), buildkit.executableGlobs );
+			var list = fsext.glob( process.cwd(), buildkit.executableGlobs, {refresh:true} );
 
 			for (var i = 0, l = list.length; i < l; i ++) {
 				fs.chmodSync(list[i].path, 0777);
