@@ -188,8 +188,9 @@ var pub = {
 				if (installedVersion && semver.eq(version, installedVersion)) {
 					logger.log("Installed version is current at v"+version+"\n", 0);
 					return npmCallback.call(that);
+				} else if (installedVersion && semver.lt(installedVersion, version)) {
+					logger.log("Installed version is out of date at v"+installedVersion+ current is v"+version+"\n", 0);
 				}
-
 			//buildkit not installed, download
 			pub.downloadBuildkit(buildkit, installCallback, that);
 
