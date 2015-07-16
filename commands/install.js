@@ -183,10 +183,18 @@ var pub = {
 			}
 
 		} else {
+			logger.log("No cached version available.\n", 1);
+			pub.getBuildCurrentVersion(buildkit, function(version) {
+
+				if (installedVersion && semver.eq(version, installedVersion)) {
+					logger.log("Installed version is current at v"+version+"\n", 0);
+					return npmCallback.call(that);
+				}
 
 			//buildkit not installed, download
 			pub.downloadBuildkit(buildkit, installCallback, that);
 
+			});
 		}
 	},
 
