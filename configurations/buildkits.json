@@ -1,9 +1,9 @@
 [
 	{
 		"name": "rub",
-		"repoUrl": "https://github.com/oliverfoster/adapt-buildkit-rub",
-		"versionFileUrl": "https://raw.githubusercontent.com/oliverfoster/adapt-buildkit-rub/master/buildkit/package.json",
-		"tarballUrl": "https://github.com/oliverfoster/adapt-buildkit-rub/archive/master.tar.gz",
+		"repoUrl": "https://github.com/cgkineo/adapt-buildkit-rub",
+		"versionFileUrl": "https://raw.githubusercontent.com/cgkineo/adapt-buildkit-rub/master/buildkit/package.json",
+		"tarballUrl": "https://github.com/cgkineo/adapt-buildkit-rub/archive/master.tar.gz",
 		"versionFile": "buildkit/package.json",
 		"frameworkSupport": "1.1.1 - 2.0.x",
 		"priority": 0,
@@ -13,7 +13,7 @@
 			"**",
 			"!.gitignore",
 			"!.gitattributes",
-			"!README.md"
+			"!**/rub/README.md"
 		],
 		"executableGlobs": [
 			"**/util-ffprobe*",

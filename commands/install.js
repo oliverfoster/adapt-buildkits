@@ -20,8 +20,7 @@ var pub = {
 		var availableBuildkits = pub.findAvailableBuildkits();
 		logger.log((!buildkitName ? "":"\n")+"Buildkit versions found:\n '"+_.keys(availableBuildkits).join("', '")+"'\n",0);
 
-		//uninstall previous
-		require("../commands/uninstall.js").entryPoint(true);
+		
 	
 		
 		var chosenBuildkit;
@@ -58,6 +57,24 @@ var pub = {
 		pub.checkBuildkitUpToDate(chosenBuildkit, function() {
 
 			pub.installBuildkit(chosenBuildkit);
+
+		}, function() {
+
+			function npmInstall2(finished, that) {
+				var oldCwd = process.cwd();
+				if (fs.existsSync("buildkit")) {
+					process.chdir( path.join(process.cwd(), "buildkit") );
+					pub.npmInstall(finished, that, oldCwd, chosenBuildkit);
+				} else if (fs.existsSync("package.json")) {
+					pub.npmInstall(finished, that, oldCwd, chosenBuildkit);
+				}
+			}
+
+			npmInstall2(function() {
+				this.setPermissions(function() {
+					logger.log("Done.",0);	
+				}, this, chosenBuildkit);
+			}, this);
 
 		}, this);
 
@@ -108,38 +125,67 @@ var pub = {
 		return matching;
 	},
 
-	checkBuildkitUpToDate: function(buildkit, callback, that) {
+	checkBuildkitUpToDate: function(buildkit, installCallback, npmCallback, that) {
+
+		var installedFile = path.join(process.cwd(), ".buildkit");
+		var installedVersion;
+		if (fs.existsSync(installedFile)) {
+			var installedFileJSON = JSON.parse(fs.readFileSync(installedFile));
+			var installedVersionPath = path.join(process.cwd(),installedFileJSON.versionFile);
+			if (fs.existsSync(installedVersionPath)) {
+				var installedVersionJSON = JSON.parse(fs.readFileSync(installedVersionPath));
+				installedVersion = installedVersionJSON.version;
+				if (installedVersionJSON.custom) {
+					logger.log("Custom version installed.", 1);
+					return npmCallback.call(that);
+				}
+			}
+
+		}
 		
 		if (buildkit.installed) {
 			//if buildkit is installed, check that it is up to date
 			if (buildkit.versionFile && buildkit.versionFileUrl) {
-				var versionFilePath = path.join(__dirname, "../buildkits", buildkit.name, buildkit.versionFile);
+				var cachedVersionFilePath = path.join(__dirname, "../buildkits", buildkit.name, buildkit.versionFile);
 				
-				if (!fs.existsSync(versionFilePath)) {
-					return pub.downloadBuildkit(buildkit, callback, that);
+				if (!fs.existsSync(cachedVersionFilePath)) {
+					return pub.downloadBuildkit(buildkit, installCallback, that);
 				}
-				var versionJSON = JSON.parse(fs.readFileSync(versionFilePath));
+				var cachedVersionJSON = JSON.parse(fs.readFileSync(cachedVersionFilePath));
 
 				pub.getBuildCurrentVersion(buildkit, function(version) {
 					//updated the buildkit if out of date
-					if (semver.lt(versionJSON.version, version)) {
-						logger.log("Version out of date at v"+versionJSON.version + " downloading v"+version+"\n", 1);
-						pub.downloadBuildkit(buildkit, callback, that);
+					if (semver.lt(cachedVersionJSON.version, version)) {
+						logger.log("Cached version out of date at v"+cachedVersionJSON.version + " downloading v"+version+"\n", 1);
+						console.log(installedVersion);
+						if (installedVersion && semver.eq(cachedVersionJSON.version, installedVersion)) {
+							logger.log("Installed version is current at v"+installedVersion+"\n", 0);
+							return npmCallback.call(that);
+						}
+						//uninstall previous
+						require("../commands/uninstall.js").entryPoint(true);
+						pub.downloadBuildkit(buildkit, installCallback, that);
 					} else {
-						logger.log("Version is current at v"+versionJSON.version+"\n", 0);
-						callback.call(that);
+						logger.log("Cached version is current at v"+cachedVersionJSON.version+"\n", 0);
+						if (installedVersion && semver.eq(cachedVersionJSON.version, installedVersion)) {
+							logger.log("Installed version is current at v"+cachedVersionJSON.version+"\n", 0);
+							return npmCallback.call(that);
+						}
+						//uninstall previous
+						require("../commands/uninstall.js").entryPoint(true);
+						installCallback.call(that);
 					}
 				}, this);
 
 			} else {
 				//buildkit version not specified, assume version is ok
-				callback.call(that);
+				installCallback.call(that);
 			}
 
 		} else {
 
 			//buildkit not installed, download
-			pub.downloadBuildkit(buildkit, callback, that);
+			pub.downloadBuildkit(buildkit, installCallback, that);
 
 		}
 	},

@@ -1,6 +1,6 @@
 {
   "name": "adapt-buildkits",
-  "version": "0.0.63",
+  "version": "0.0.64",
   "description": "Command line BuildKits for Adapt",
   "main": "./bin/adapt-buildkits.js",
   "dependencies": {
@@ -18,7 +18,7 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "http://github.com/oliverfoster/adapt-buildkits"
+    "url": "http://github.com/cgkineo/adapt-buildkits"
   },
   "license": "GPLv3",
   "bin": {
@@ -26,12 +26,12 @@
   },
   "gitHead": "2303f38c68311ea71d97d2807dde239f040c6b2d",
   "bugs": {
-    "url": "https://github.com/oliverfoster/adapt-buildkits/issues"
+    "url": "https://github.com/cgkineo/adapt-buildkits/issues"
   },
   "scripts": {
     "postinstall": "node scripts/install.js"
   },
-  "homepage": "https://github.com/oliverfoster/adapt-buildkits",
+  "homepage": "https://github.com/cgkineo/adapt-buildkits",
   "_id": "adapt-buildkits@0.0.15",
   "_shasum": "0da959e052c25c2396e22efdb79a6740bc5245d5",
   "_from": "adapt-buildkits@",

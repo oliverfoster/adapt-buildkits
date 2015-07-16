@@ -10,7 +10,7 @@ To install a buildkit to your Adapt Framework directory:
 ```
 adapt-buildkit install rub
 ```
-[see: adapt-buildkit-rub](https://github.com/oliverfoster/adapt-buildkit-rub)
+[see: adapt-buildkit-rub](https://github.com/cgkineo/adapt-buildkit-rub)
 
 To list the available buildkits:
 ```
