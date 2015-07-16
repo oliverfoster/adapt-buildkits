@@ -157,8 +157,7 @@ var pub = {
 					//updated the buildkit if out of date
 					if (semver.lt(cachedVersionJSON.version, version)) {
 						logger.log("Cached version out of date at v"+cachedVersionJSON.version + " downloading v"+version+"\n", 1);
-						console.log(installedVersion);
-						if (installedVersion && semver.eq(cachedVersionJSON.version, installedVersion)) {
+						if (installedVersion && semver.eq(version, installedVersion)) {
 							logger.log("Installed version is current at v"+installedVersion+"\n", 0);
 							return npmCallback.call(that);
 						}
