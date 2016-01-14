@@ -13,7 +13,9 @@
 			"**",
 			"!.gitignore",
 			"!.gitattributes",
-			"!**/rub/README.md"
+			"!**/rub/README.md",
+			"!CHANGELOG.md",
+			"!README.md"
 		],
 		"executableGlobs": [
 			"**/util-ffprobe*",
@@ -21,33 +23,26 @@
 		]
 	},
 	{
-		"name": "gulp",
-		"versionFileUrl": "https://raw.githubusercontent.com/cgkineo/adapt-buildkit-gulp/master/package.json",
-		"versionFile": "package.json",
-		"repoUrl": "https://github.com/cgkineo/adapt-buildkit-gulp",
-		"tarballUrl": "https://github.com/cgkineo/adapt-buildkit-gulp/archive/master.tar.gz",
-		"frameworkSupport": "1.2.1",
-		"node_modulesCache": false,
-		"npmInstall": true,
+		"name": "rub-develop",
+		"repoUrl": "https://github.com/cgkineo/adapt-buildkit-rub",
+		"versionFileUrl": "https://raw.githubusercontent.com/cgkineo/adapt-buildkit-rub/develop/buildkit/package.json",
+		"tarballUrl": "https://github.com/cgkineo/adapt-buildkit-rub/archive/develop.tar.gz",
+		"versionFile": "buildkit/package.json",
+		"frameworkSupport": "1.1.1 - 2.0.x",
 		"priority": 1,
+		"node_modulesCache": true,
+		"npmInstall": true,
 		"copyGlobs": [
 			"**",
-			"!README.md",
-			"!svg"
-		]
-	},
-	{
-		"name": "grunt",
-		"versionFileUrl": "https://raw.githubusercontent.com/cgkineo/adapt-buildkit-grunt/master/package.json",
-		"versionFile": "package.json",
-		"repoUrl": "https://github.com/cgkineo/adapt-buildkit-grunt",
-		"tarballUrl": "https://github.com/cgkineo/adapt-buildkit-grunt/archive/master.tar.gz",
-		"frameworkSupport": "1.2.1",
-		"node_modulesCache": false,
-		"npmInstall": true,
-		"priority": 2,
-		"copyGlobs": [
-			"**"
+			"!.gitignore",
+			"!.gitattributes",
+			"!**/rub/README.md",
+			"!CHANGELOG.md",
+			"!README.md"
+		],
+		"executableGlobs": [
+			"**/util-ffprobe*",
+			"rub"
 		]
 	}
 ]
