@@ -1,12 +1,12 @@
 {
   "name": "adapt-buildkits",
-  "version": "0.0.69",
+  "version": "0.0.70",
   "description": "Command line BuildKits for Adapt",
   "main": "./bin/adapt-buildkits.js",
   "dependencies": {
     "chalk": "^1.0.0",
     "commander": "^2.8.1",
-    "minimatch": "^2.0.4",
+    "minimatch": "^3.0.2",
     "handlebars": "2.0.0",
     "npm": "^2.9.0",
     "semver": "^4.3.3",
