@@ -19,7 +19,7 @@ var pub = {
 		}
 
 		var osbp = filepath
-		var stat = fs.statSync(filepath);
+		var stat = fs.lstatSync(filepath);
 		
 		filepath = new String(filepath);
 
@@ -32,6 +32,7 @@ var pub = {
 		if (stat && !stat.isDirectory()) {
 			stat.dir = false;
 			stat.file = true;
+			stat.link = stat.isSymbolicLink();
 			filepath = _.extend(filepath, stat);
 		} else {
 			stat.dir = true;
@@ -75,11 +76,6 @@ var pub = {
 		for (var i = 0, l = list.length; i < l; i++) {
 			var file = list[i];
 			var fullpath = path.join(dir, file);
-
-			if (!fs.existsSync(fullpath)) {
-				red++;
-				continue;
-			}
 			
 			var fileObject = pub.file(fullpath);
 
@@ -357,7 +353,7 @@ var pub = {
 		var dirs = _.where(list, { dir: true });
 		var files = _.where(list, { dir: false });
 		for (var i = 0, l = files.length; i < l; i++) {
-			if (fs.existsSync(files[i].path)) fs.unlinkSync(files[i].path);
+			if (fs.existsSync(files[i].path) || files[i].link) fs.unlinkSync(files[i].path);
 		}
 		for (var i = dirs.length - 1, l = -1; i > l; i--) {
 			if (fs.existsSync(dirs[i].path)) fs.rmdirSync(dirs[i].path);
@@ -371,8 +367,10 @@ var pub = {
 			return;
 		}
 
-		pub.remove(pub.expand(path), [ "**" ]);
-		if (fs.existsSync(path)) fs.rmdirSync(path);
+		pub.remove(pub.expand(path), [ "**", "**/.*", ".*" ]);
+		if (fs.existsSync(path)) {
+			fs.rmdirSync(path);
+		}
 	}
 
 };
