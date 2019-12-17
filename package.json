@@ -8,7 +8,7 @@
     "commander": "^2.8.1",
     "minimatch": "^3.0.2",
     "handlebars": "2.0.0",
-    "npm": "^2.9.0",
+    "npm": "^6.13.4",
     "semver": "^4.3.3",
     "tar": "^5.0.5",
     "underscore": "~1.6.0",
