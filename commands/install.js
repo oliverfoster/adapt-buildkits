@@ -232,8 +232,11 @@ var pub = {
 		logger.log(" Downloading (this may take a while)...", 0);
 		pub.download(buildkit.tarballUrl, downloadFileName, function() {
 			logger.log(" Extracting...",0);
-			var targz = require("tar.gz");
-			var compress = new targz().extract(downloadFileName, tempPath , function(err){
+			var tar = require("tar");
+			tar.extract({
+				cwd: tempPath,
+				file: downloadFileName
+			}, function(err) {
 				logger.log(" Caching...\n", 0);
 				var lists = fsext.list(tempPath);
 				fsext.copy(lists.dirs[0].path, outputPath, [ "**", ".*"], function() {
